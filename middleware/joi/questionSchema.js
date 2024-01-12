@@ -1,6 +1,6 @@
 const Joi = required("joi");
 
-const QuestionJoi = Joi.object({
+const questionJoi = Joi.object({
   question: Joi.string().required().min(5).max(100).messages({
     "string.base": "Question should be a string",
     "string.empty": "Question cannot be empty",
@@ -35,4 +35,4 @@ const QuestionJoi = Joi.object({
   }),
 });
 
-module.exports = QuestionJoi;
+module.exports = questionJoi;

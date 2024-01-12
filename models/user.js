@@ -11,7 +11,7 @@ const UserSchema = new mongoose.Schema(
       require: true,
       unique: true,
     },
-    password: {
+    hashedPassword: {
       type: String,
       requier: true,
     },
@@ -40,7 +40,7 @@ const UserSchema = new mongoose.Schema(
       type: String,
     },
   },
-  { timestamps: ture }
+  { timestamps: true }
 );
 
 const UserModel = mongoose.model("User", UserSchema);

@@ -11,7 +11,7 @@ const AdminSchema = new mongoose.Schema(
       require: true,
       unique: true,
     },
-    password: {
+    hashedPassword: {
       type: String,
       requier: true,
     },
@@ -19,7 +19,7 @@ const AdminSchema = new mongoose.Schema(
       type: String,
     },
   },
-  { timestamps: ture }
+  { timestamps: true }
 );
 
 const AdminModel = mongoose.model("Admin", AdminSchema);

@@ -1,6 +1,6 @@
 const Joi = require("joi");
 
-const userJoi = Joi.object({
+const adminJoi = Joi.object({
   name: Joi.string().min(3).max(30).required().messages({
     "string.base": "Name should be a string",
     "string.empty": "Name cannot be empty",
@@ -25,4 +25,4 @@ const userJoi = Joi.object({
   fcm_token: Joi.string(),
 });
 
-module.exports = userJoi;
+module.exports = adminJoi;
