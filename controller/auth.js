@@ -48,6 +48,29 @@ module.exports.AdminRegister = async (req, res) => {
   }
 };
 
+module.exports.verifyUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res
+        .status(400)
+        .send({ success: false, message: "No user found on that Id" });
+    }
+    user.active = true;
+    await user.save();
+
+    return res
+      .status(200)
+      .send({ success: true, message: "User active sucessfully", data: user });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal server error" });
+  }
+};
+
 module.exports.UserRegister = async (req, res) => {
   try {
     const result = userJoi.validate(req.body, {
@@ -234,4 +257,52 @@ module.exports.getOneUser = async (req, res) => {
     message: "All Admin",
     data: allData,
   });
+};
+
+module.exports.updateUSer = async (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      password,
+      phoneNumber,
+      type,
+      idCard,
+      businessRegisterNum,
+    } = req.body;
+
+    const userId = req.params.id;
+
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res
+        .status(400)
+        .send({ success: false, message: "No user found on that Id" });
+    }
+
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+      user.hashedPassword = hashedPassword || user.hashedPassword;
+    }
+
+    user.name = name || user.name;
+    user.email = email || user.email;
+    user.phoneNumber = phoneNumber || user.phoneNumber;
+    user.type = type || user.type;
+    user.idCard = idCard || user.idCard;
+    user.businessRegisterNum = businessRegisterNum || user.businessRegisterNum;
+    user.active = false;
+
+    await user.save();
+
+    res
+      .status(200)
+      .send({ success: true, message: "user updated sucessfully", data: user });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal server error", error: error });
+  }
 };

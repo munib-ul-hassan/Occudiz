@@ -36,6 +36,11 @@ const UserSchema = new mongoose.Schema(
         return this.type === "Business";
       },
     },
+    active: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
     fcmToken: {
       type: String,
     },
