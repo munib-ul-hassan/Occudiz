@@ -28,7 +28,6 @@ const QuestionSchema = new mongoose.Schema({
   depQue: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Question",
-    default: "",
   },
   depAns: [
     {

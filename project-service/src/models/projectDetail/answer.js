@@ -7,10 +7,8 @@ const AnswerSchema = new mongoose.Schema({
   },
   answers: [
     {
-      asnwer: {
-        type: String,
-        required: true,
-      },
+      type: String,
+      required: true,
     },
   ],
 });

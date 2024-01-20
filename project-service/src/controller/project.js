@@ -75,6 +75,7 @@ module.exports.questionCreate = async (req, res) => {
     const result = questionJoi.validate(req.body, {
       abortEarly: false,
     });
+    // console.log(result);
     if (result.error) {
       const x = result.error.details.map((error) => error.message);
       return res.status(400).json({
@@ -82,17 +83,52 @@ module.exports.questionCreate = async (req, res) => {
         message: x,
       });
     }
-    console.log(result.value);
-    result.value.depQue == null ? (depQue = "") : (depQue = depQue);
+
     const newQuestion = new QuestionModel({ ...result.value });
     await newQuestion.save();
-    return res.status(200).send({
+    console.log(newQuestion);
+    res.status(200).send({
       sucess: true,
       message: "question has been added",
       data: newQuestion,
     });
   } catch (error) {
-    cosnole.log(error);
+    console.log(error);
     res.status(500).send({ success: false, message: "Internal server error " });
+  }
+};
+
+module.exports.answerCreate = async (req, res) => {
+  try {
+    const answers = req.body.answers;
+    const questionId = req.params.questionId;
+    const question = await QuestionModel.findById(questionId);
+    if (!question) {
+      return res
+        .status(400)
+        .send({ success: false, messaeg: "No Question Found on that id" });
+    }
+    if (!answers) {
+      return res
+        .status(400)
+        .send({ success: false, messaeg: "You have to provide the answer" });
+    }
+    const newAnswer = new AnswerModel({
+      answers,
+      questionId,
+    });
+
+    await newAnswer.save();
+
+    res.status(200).send({
+      success: true,
+      messaeg: "Answer submitted successfully",
+      data: newAnswer,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal server error!", error });
   }
 };

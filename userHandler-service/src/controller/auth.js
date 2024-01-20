@@ -153,10 +153,10 @@ module.exports.login = async (req, res) => {
     }
     // email = email.toLowerCase();
 
-    let user = await AdminModel.findOne({ email });
+    let user = await AdminModel.findOne({ email: email.toLowerCase() });
 
     if (!user) {
-      user = await UserModel.findOne({ email });
+      user = await UserModel.findOne({ email: email.toLowerCase() });
       if (!user) {
         return res
           .status(400)
