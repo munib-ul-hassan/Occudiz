@@ -3,7 +3,8 @@ const StatusModel = require("../models/projectDetail/status");
 const TypeModel = require("../models/projectDetail/type");
 const AnswerModel = require("../models/projectDetail/answer");
 const QuestionModel = require("../models/projectDetail/Questions");
-const questionJoi = require("../middleware/joi/questionSchema");
+const questionJoi = require("../../../common/middleware/joi/questionSchema");
+// const projectJoi = require("../../../common/middleware/joi/projectSchemas");
 
 module.exports.statusCreate = async (req, res) => {
   try {
@@ -85,13 +86,11 @@ module.exports.questionCreate = async (req, res) => {
     result.value.depQue == null ? (depQue = "") : (depQue = depQue);
     const newQuestion = new QuestionModel({ ...result.value });
     await newQuestion.save();
-    return res
-      .status(200)
-      .send({
-        sucess: true,
-        message: "question has been added",
-        data: newQuestion,
-      });
+    return res.status(200).send({
+      sucess: true,
+      message: "question has been added",
+      data: newQuestion,
+    });
   } catch (error) {
     cosnole.log(error);
     res.status(500).send({ success: false, message: "Internal server error " });

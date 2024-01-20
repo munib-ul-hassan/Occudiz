@@ -1,8 +1,8 @@
 const AdminModel = require("../models/admin");
 const UserModel = require("../models/user");
 const bcrypt = require("bcrypt");
-const adminJoi = require("../middleware/joi/adminSchema");
-const userJoi = require("../middleware/joi/userSchema");
+const adminJoi = require("../../../common/middleware/joi/adminSchema");
+const userJoi = require("../../../common/middleware/joi/userSchema");
 const JWT = require("jsonwebtoken");
 
 module.exports.AdminRegister = async (req, res) => {
