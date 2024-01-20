@@ -10,9 +10,7 @@ module.exports.AdminRegister = async (req, res) => {
     const result = adminJoi.validate(req.body, {
       abortEarly: false,
     });
-    result.value.email = result.value.email.toLowerCase();
 
-    console.log(result.value);
     if (result.error) {
       const x = result.error.details.map((error) => error.message);
       return res.status(400).json({
@@ -20,6 +18,7 @@ module.exports.AdminRegister = async (req, res) => {
         message: x,
       });
     }
+    result.value.email = result.value.email.toLowerCase();
     const existingEmail = await AdminModel.findOne({
       email: result.value.email,
     });
@@ -186,7 +185,6 @@ module.exports.login = async (req, res) => {
       type: user.type,
       token: token,
     });
-    console.log(token);
   } catch (error) {
     console.log(error);
     return res.status(500).send({

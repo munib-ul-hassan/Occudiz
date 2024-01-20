@@ -18,7 +18,7 @@ const QuestionSchema = new mongoose.Schema({
   },
   options: [
     {
-      type: string,
+      type: String,
     },
   ],
   direct: {
@@ -28,6 +28,7 @@ const QuestionSchema = new mongoose.Schema({
   depQue: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Question",
+    default: "",
   },
   depAns: [
     {

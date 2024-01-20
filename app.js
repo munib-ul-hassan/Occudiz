@@ -12,7 +12,7 @@ const mongodb = require("./config/mongodb");
 
 mongodb();
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 6000;
 
 app.listen(PORT, () => {
   try {
@@ -24,8 +24,11 @@ app.listen(PORT, () => {
 
 const auth = require("./routes/auth");
 
+const project = require("./routes/project.js");
+
 app.get("/", (req, res) => {
   res.send("App is Running");
 });
 
+app.use("/", project);
 app.use("/auth", auth);

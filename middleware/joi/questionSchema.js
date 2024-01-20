@@ -1,4 +1,4 @@
-const Joi = required("joi");
+const Joi = require("joi");
 
 const questionJoi = Joi.object({
   question: Joi.string().required().min(5).max(100).messages({
@@ -25,12 +25,12 @@ const questionJoi = Joi.object({
   direct: Joi.boolean().required(),
   depQue: Joi.when("direct", {
     is: false,
-    then: Joi.objectId().required(),
+    then: Joi.string().required(),
     otherwise: Joi.forbidden(),
   }),
   depAns: Joi.when("direct", {
     is: false,
-    then: Joi.array().items(Joi.objectId()).min(1).required(),
+    then: Joi.array().items(Joi.array()).min(1).required(),
     otherwise: Joi.forbidden(),
   }),
 });
