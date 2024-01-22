@@ -12,7 +12,7 @@ const mongodb = require("../../common/config/mongodb");
 
 mongodb();
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   try {

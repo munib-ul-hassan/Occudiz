@@ -9,7 +9,7 @@
     "payments": "node payments-service/src/app.js",
     "chatting": "node chatting-service/src/app.js",
     "start": "npm-run-all --parallel  userHandler ProjectHandler chatting payments",
-    "dev": "concurrently  \"nodemon userHandler-service/src/app.js\" \"nodemon project-service/src/app.js\" \"nodemon payments-service/src/app.js\" \"nodemon chatting-service/src/app.js\""
+    "dev": "concurrently  \"nodemon userHandler-service/src/app.js\" \"nodemon project-service/src/app.js\" \"nodemon payments-service/src/app.js\" \"nodemon chatting-service/src/app.js\" \"nodemon API-Gateway/app.js\""
   },
   "keywords": [],
   "author": "",
@@ -22,6 +22,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "fcm-node": "^1.6.1",
+    "http-proxy-middleware": "^2.0.6",
     "joi": "^17.9.1",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.3",
