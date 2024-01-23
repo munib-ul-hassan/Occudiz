@@ -4,6 +4,8 @@ const TypeModel = require("../models/projectDetail/type");
 const AnswerModel = require("../models/projectDetail/answer");
 const QuestionModel = require("../models/projectDetail/Questions");
 const questionJoi = require("../../../common/middleware/joi/questionSchema");
+const StageModel = require("../models/projectDetail/stage");
+const projectJoi = require("../../../common/middleware/joi/projectSchema");
 // const projectJoi = require("../../../common/middleware/joi/projectSchemas");
 
 module.exports.statusCreate = async (req, res) => {
@@ -34,6 +36,38 @@ module.exports.statusCreate = async (req, res) => {
     });
   } catch (error) {
     cosnole.log(error);
+    res.status(500).send({ success: false, message: "Internal server error " });
+  }
+};
+
+module.exports.stageCreate = async (req, res) => {
+  try {
+    const stage = req.body.stage;
+    if (!stage) {
+      return res.status(400).send({
+        success: false,
+        message: "You have to provide a Status field",
+      });
+    }
+    const stages = stage.toLowerCase();
+    console.log(stages);
+    const existingStatus = await StatusModel.findOne({ stage: stages });
+    if (existingStatus) {
+      return res
+        .status(400)
+        .send({ success: false, message: "This status is alredy added" });
+    }
+    const newStage = new StageModel({
+      stage: stages,
+    });
+    await newStage.save();
+    res.status(200).send({
+      success: true,
+      message: "New status has been added",
+      data: newStage,
+    });
+  } catch (error) {
+    console.log(error);
     res.status(500).send({ success: false, message: "Internal server error " });
   }
 };
@@ -130,5 +164,33 @@ module.exports.answerCreate = async (req, res) => {
     return res
       .status(500)
       .send({ success: false, message: "Internal server error!", error });
+  }
+};
+
+module.exports.projectCreate = async (req, res) => {
+  try {
+    const result = projectJoi.validate(req.body, {
+      abortEarly: false,
+    });
+    console.log(result);
+    if (result.error) {
+      const x = result.error.details.map((error) => error.message);
+      return res.status(400).json({
+        success: false,
+        message: x,
+      });
+    }
+
+    const newProject = new ProjectModel({ ...result.value });
+    await newProject.save();
+    console.log(newProject);
+    res.status(200).send({
+      sucess: true,
+      message: "Project has been added",
+      data: newProject,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ success: false, message: "Internal server error " });
   }
 };

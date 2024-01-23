@@ -37,6 +37,12 @@ const ProjectSchema = new mongoose.Schema(
         ref: "Stages",
       },
     ],
+    answerId: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Answer",
+      },
+    ],
     assignedTo: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
