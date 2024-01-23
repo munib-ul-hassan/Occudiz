@@ -21,8 +21,6 @@ const userJoi = Joi.object({
     "string.max": "Password cannot be longer than 40 characters",
     "any.required": "Password is required",
   }),
-  role: Joi.number().required(),
-  token: Joi.string(),
   phoneNumber: Joi.number()
     .integer()
     .min(1e9) // Minimum value is 10^9

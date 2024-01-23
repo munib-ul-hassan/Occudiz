@@ -2,13 +2,13 @@ const express = require("express");
 const authControler = require("../controller/auth");
 const router = express.Router();
 
-router.post("/register/admin", authControler.AdminRegister);
+// router.post("/register/admin", authControler.AdminRegister);
 
 router.post("/register", authControler.UserRegister);
 
 router.put("/verify/user/:id", authControler.verifyUser);
 
-router.get("/all/admin", authControler.getAdmin);
+// router.get("/all/admin", authControler.getAdmin);
 
 router.get("/all", authControler.getUser);
 
