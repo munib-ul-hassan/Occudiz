@@ -344,7 +344,10 @@ module.exports.oneProject = async (req, res) => {
       .populate("type")
       .populate("status")
       .populate("stage")
-      .populate({ path: "answerId", populate: { path: "questionId" } })
+      .populate({
+        path: "answerId",
+        populate: { path: "questionId", select: "question" },
+      })
       .populate("assignedTo");
     if (!allProject) {
       return res
