@@ -1,10 +1,12 @@
 const express = require("express");
 const authControler = require("../controller/auth");
+const { registerSchema } = require('../../../common/schemas/userHandler-service');
+const { requireSchema, requireValidId } = require('../../../common/middleware/validate');
 const router = express.Router();
 
 // router.post("/register/admin", authControler.AdminRegister);
 
-router.post("/register", authControler.UserRegister);
+router.post("/register", requireSchema(registerSchema), authControler.UserRegister);
 
 router.put("/verify/user/:id", authControler.verifyUser);
 

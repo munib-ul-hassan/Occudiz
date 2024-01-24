@@ -8,7 +8,7 @@ const app = express();
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use("/payments-service", payments);
+app.use(payments);
 
 const mongodb = require("../../common/config/mongodb");
 

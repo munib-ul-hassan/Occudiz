@@ -24,8 +24,4 @@ app.listen(PORT, () => {
 
 const auth = require("./routes/auth");
 
-app.get("/", (req, res) => {
-  res.send("App is Running");
-});
-
 app.use("/auth", auth);
