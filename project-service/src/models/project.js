@@ -15,7 +15,7 @@ const ProjectSchema = new mongoose.Schema(
     type: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "TypeOFProject",
+        ref: "Type",
       },
     ],
     porposalFrom: {
@@ -34,7 +34,7 @@ const ProjectSchema = new mongoose.Schema(
     stage: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Stages",
+        ref: "Stage",
       },
     ],
     answerId: [

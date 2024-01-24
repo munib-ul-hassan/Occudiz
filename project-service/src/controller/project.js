@@ -182,8 +182,9 @@ module.exports.projectCreate = async (req, res) => {
     }
 
     const newProject = new ProjectModel({ ...result.value });
+
     await newProject.save();
-    console.log(newProject);
+
     res.status(200).send({
       sucess: true,
       message: "Project has been added",
@@ -192,5 +193,173 @@ module.exports.projectCreate = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).send({ success: false, message: "Internal server error " });
+  }
+};
+
+module.exports.allStatus = async (req, res) => {
+  try {
+    const allStatus = await StatusModel.find();
+    res.status(200).send({
+      success: true,
+      message: "Following are the all status",
+      data: allStatus,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal server error" });
+  }
+};
+
+module.exports.allStage = async (req, res) => {
+  try {
+    const allStage = await StageModel.find();
+    res.status(200).send({
+      success: true,
+      message: "Following are the all stage",
+      data: allStage,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal server error" });
+  }
+};
+
+module.exports.allType = async (req, res) => {
+  try {
+    const allType = await TypeModel.find();
+    res.status(200).send({
+      success: true,
+      message: "Following are the all type",
+      data: allType,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal server error" });
+  }
+};
+
+module.exports.allquestions = async (req, res) => {
+  try {
+    const allQuestion = await QuestionModel.find();
+    res.status(200).send({
+      success: true,
+      message: "Following are the all Question",
+      data: allQuestion,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal server error" });
+  }
+};
+
+module.exports.oneQuestion = async (req, res) => {
+  try {
+    const questionId = req.params.queId;
+    const allQuestion = await QuestionModel.findById(questionId);
+    if (!allQuestion) {
+      return res
+        .status(400)
+        .send({ success: false, message: "No question Found that Id " });
+    }
+    res.status(200).send({
+      success: true,
+      data: allQuestion,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal server error" });
+  }
+};
+
+module.exports.allAnswer = async (req, res) => {
+  try {
+    const allAnswer = await AnswerModel.find().populate("questionId");
+    res.status(200).send({
+      success: true,
+      message: "Following are the all Answer",
+      data: allAnswer,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal server error" });
+  }
+};
+
+module.exports.oneAnswer = async (req, res) => {
+  try {
+    const answerId = req.params.ansId;
+    const allAnswer = await AnswerModel.findById(answerId).populate(
+      "questionId"
+    );
+    if (!allAnswer) {
+      return res
+        .status(400)
+        .send({ success: false, message: "No answeer found on that Id" });
+    }
+    res.status(200).send({
+      success: true,
+      message: "Following are the all Answer",
+      data: allAnswer,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal server error" });
+  }
+};
+
+module.exports.allProject = async (req, res) => {
+  try {
+    const allProject = await ProjectModel.find();
+    res.status(200).send({
+      success: true,
+      message: "Following are the all Project",
+      data: allProject,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal server error" });
+  }
+};
+
+module.exports.oneProject = async (req, res) => {
+  try {
+    const projectId = req.params.projectId;
+    const allProject = await ProjectModel.findById(projectId)
+      .populate("type")
+      .populate("status")
+      .populate("stage")
+      .populate({ path: "answerId", populate: { path: "questionId" } })
+      .populate("assignedTo");
+    if (!allProject) {
+      return res
+        .status(400)
+        .send({ success: false, message: "No project found on that Id" });
+    }
+    res.status(200).send({
+      success: true,
+      message: "Following are the all Project",
+      data: allProject,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal server error" });
   }
 };
