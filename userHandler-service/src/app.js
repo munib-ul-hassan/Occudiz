@@ -1,18 +1,22 @@
 const express = require("express");
-const dotenv = require("dotenv").config();
+require("dotenv").config();
 const cors = require("cors");
+const bodyParser = require("body-parser");
 
 const app = express();
-
+app.enable("json spaces");
+app.enable("strict routing");
 app.use(cors());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const mongodb = require("../../common/config/mongodb");
-
 mongodb();
 
 const PORT = process.env.PORT || 3003;
+
+const auth = require("./routes/auth");
+app.use("/auth", auth);
 
 app.listen(PORT, () => {
   try {
@@ -21,7 +25,3 @@ app.listen(PORT, () => {
     console.log("Something Went wrong");
   }
 });
-
-const auth = require("./routes/auth");
-
-app.use("/auth", auth);

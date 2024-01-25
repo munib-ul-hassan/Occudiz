@@ -1,18 +1,11 @@
 const express = require('express');
 const httpProxy = require('http-proxy');
-const cors = require("cors");
-const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const { morganLogger } = require('../common/utils/log.js');
 
 const app = express();
 const proxy = httpProxy.createProxyServer();
 
-app.enable("json spaces");
-app.enable("strict routing");
-app.use(cors());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
 app.use(morgan(morganLogger));
 
 const routes = {

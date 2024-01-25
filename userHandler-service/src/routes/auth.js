@@ -5,7 +5,6 @@ const { requireSchema, requireValidId } = require('../../../common/middleware/va
 const router = express.Router();
 
 // router.post("/register/admin", authControler.AdminRegister);
-
 router.post("/register", requireSchema(registerSchema), authControler.UserRegister);
 
 router.put("/verify/user/:id", authControler.verifyUser);

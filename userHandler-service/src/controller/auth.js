@@ -1,9 +1,14 @@
-// const AdminModel = require("../models/admin");
 const UserModel = require("../models/user");
 const bcrypt = require("bcrypt");
-// const adminJoi = require("../../../common/middleware/joi/adminSchema");
 const userJoi = require("../../../common/middleware/joi/userSchema");
+const config = require('../../../common/utils/config')
+const SECRET = config.JWT_SECRET;
+
 const JWT = require("jsonwebtoken");
+const generateJWT = (payload, expires = "24h") =>
+  JWT.sign(payload, SECRET, {
+    expiresIn: expires,
+  });
 
 // module.exports.AdminRegister = async (req, res) => {
 //   try {
@@ -72,12 +77,9 @@ module.exports.verifyUser = async (req, res) => {
 
 module.exports.UserRegister = async (req, res) => {
   try {
-    const result = userJoi.validate(req.body, {
-      abortEarly: false,
-    });
-    result.value.email = result.value.email.toLowerCase();
+    const result = req.body;
+    result.email = result.email.toLowerCase();
 
-    console.log(result.value);
     if (result.error) {
       const x = result.error.details.map((error) => error.message);
       return res.status(400).json({
@@ -87,7 +89,7 @@ module.exports.UserRegister = async (req, res) => {
     }
     const role = 2;
     const existingEmail = await UserModel.findOne({
-      email: result.value.email,
+      email: result.email,
     });
     if (existingEmail) {
       return res.status(400).json({
@@ -96,18 +98,34 @@ module.exports.UserRegister = async (req, res) => {
       });
     }
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(result.value.password, salt);
+    const hashedPassword = await bcrypt.hash(result.hashedPassword, salt);
 
     const newUser = new UserModel({
-      ...result.value,
+      ...result,
       role,
       hashedPassword: hashedPassword,
     });
     await newUser.save();
+    console.log(newUser._id.toString())
+
+    const user = await UserModel.findById(newUser._id.toString());
+    if (!user) {
+      return res
+        .status(400)
+        .send({ success: false, message: "No user found on that Id" });
+    }
+
+    user.token = generateJWT(
+      { id: newUser._id.toString(), email: user.email.toLowerCase(), role: user.role },
+      "30d"
+    )
+
+    await user.save();
+
     return res.status(200).json({
       success: true,
-      message: "Admin registered successfully",
-      data: newUser,
+      message: "User registered successfully",
+      data: user,
     });
   } catch (error) {
     console.error(error);

@@ -16,9 +16,9 @@ const registerSchema = {
     fcmToken: { type: "string" },
   },
   required: [
-    "email",
-    "password",
     "name",
+    "email",
+    "hashedPassword",
     "phoneNumber",
     "role",
     "type",

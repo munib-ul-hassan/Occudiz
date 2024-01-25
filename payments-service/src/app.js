@@ -1,20 +1,22 @@
 const express = require("express");
-const dotenv = require("dotenv").config();
+require("dotenv").config();
 const cors = require("cors");
-const payments =require('./routes/payments.js')
+const bodyParser = require("body-parser");
 
 const app = express();
-
+app.enable("json spaces");
+app.enable("strict routing");
 app.use(cors());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(payments);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const mongodb = require("../../common/config/mongodb");
-
 mongodb();
 
 const PORT = process.env.PORT || 3001;
+
+const payments =require('./routes/payments.js');
+app.use(payments);
 
 app.listen(PORT, () => {
   try {
@@ -23,4 +25,3 @@ app.listen(PORT, () => {
     console.log("Something Went wrong");
   }
 });
-
