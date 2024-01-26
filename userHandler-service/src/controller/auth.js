@@ -1,7 +1,7 @@
 const UserModel = require("../models/user");
 const bcrypt = require("bcrypt");
 const userJoi = require("../../../common/middleware/joi/userSchema");
-const config = require('../../../common/utils/config')
+const config = require("../../../common/utils/config");
 const SECRET = config.JWT_SECRET;
 
 const JWT = require("jsonwebtoken");
@@ -106,7 +106,7 @@ module.exports.UserRegister = async (req, res) => {
       hashedPassword: hashedPassword,
     });
     await newUser.save();
-    console.log(newUser._id.toString())
+    console.log(newUser._id.toString());
 
     const user = await UserModel.findById(newUser._id.toString());
     if (!user) {
@@ -116,9 +116,13 @@ module.exports.UserRegister = async (req, res) => {
     }
 
     user.token = generateJWT(
-      { id: newUser._id.toString(), email: user.email.toLowerCase(), role: user.role },
+      {
+        id: newUser._id.toString(),
+        email: user.email.toLowerCase(),
+        role: user.role,
+      },
       "30d"
-    )
+    );
 
     await user.save();
 
@@ -173,16 +177,16 @@ module.exports.login = async (req, res) => {
     }
     // email = email.toLowerCase();
 
-    let user = await AdminModel.findOne({ email: email.toLowerCase() });
+    // let user = await AdminModel.findOne({ email: email.toLowerCase() });
 
+    // if (!user) {
+    user = await UserModel.findOne({ email: email.toLowerCase() });
     if (!user) {
-      user = await UserModel.findOne({ email: email.toLowerCase() });
-      if (!user) {
-        return res
-          .status(400)
-          .send({ success: false, message: "No user Found on that email" });
-      }
+      return res
+        .status(400)
+        .send({ success: false, message: "No user Found on that email" });
     }
+    // }
 
     const validPassword = await bcrypt.compare(password, user.hashedPassword);
     if (!validPassword) {

@@ -3,7 +3,7 @@ const registerSchema = {
   properties: {
     name: { type: "string" },
     email: { type: "string", format: "email" },
-    hashedPassword: {
+    password: {
       type: "string", // minLength: 8, pattern: PASSWORD_REGEX
     },
     phoneNumber: { type: "number" },
@@ -16,9 +16,9 @@ const registerSchema = {
     fcmToken: { type: "string" },
   },
   required: [
-    "name",
     "email",
-    "hashedPassword",
+    "password",
+    "name",
     "phoneNumber",
     "role",
     "type",
@@ -26,4 +26,35 @@ const registerSchema = {
   ],
 };
 
-module.exports = { registerSchema };
+const loginSchema = {
+  type: "Object",
+  properties: {
+    email: { type: "string", format: "email" },
+    password: {
+      type: "string", // minLength: 8, pattern: PASSWORD_REGEX
+    },
+  },
+  required: ["email", "password"],
+};
+
+const updateSchema = {
+  type: "object",
+  properties: {
+    name: { type: "string" },
+    email: { type: "string", format: "email" },
+    password: {
+      type: "string", // minLength: 8, pattern: PASSWORD_REGEX
+    },
+    phoneNumber: { type: "number" },
+    role: { type: "number" },
+    token: { type: "string" },
+    type: { type: "string" },
+    idCard: { type: "string" },
+    businessRegisterNum: { type: "string" },
+    active: { type: "boolean" },
+    fcmToken: { type: "string" },
+  },
+  required: [],
+};
+
+module.exports = { registerSchema, loginSchema, updateSchema };

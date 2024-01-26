@@ -212,6 +212,28 @@ module.exports.allStatus = async (req, res) => {
   }
 };
 
+module.exports.deleteStatus = async (req, res) => {
+  try {
+    const statusId = req.params.statusId;
+    const allStatus = await StatusModel.findByIdAndDelete(statusId);
+    if (!allStatus) {
+      return res
+        .status(400)
+        .send({ success: false, message: "No status found on that Id" });
+    }
+    res.status(200).send({
+      success: true,
+      message: "Following status deleted successfully",
+      data: allStatus,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal server error" });
+  }
+};
+
 module.exports.allStage = async (req, res) => {
   try {
     const allStage = await StageModel.find();
@@ -219,6 +241,28 @@ module.exports.allStage = async (req, res) => {
       success: true,
       message: "Following are the all stage",
       data: allStage,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal server error" });
+  }
+};
+
+module.exports.deleteStage = async (req, res) => {
+  try {
+    const statusId = req.params.stageId;
+    const allStatus = await StageModel.findByIdAndDelete(statusId);
+    if (!allStatus) {
+      return res
+        .status(400)
+        .send({ success: false, message: "No stage found on that Id" });
+    }
+    res.status(200).send({
+      success: true,
+      message: "Following stage deleted successfully",
+      data: allStatus,
     });
   } catch (error) {
     console.log(error);
@@ -244,6 +288,28 @@ module.exports.allType = async (req, res) => {
   }
 };
 
+module.exports.deleteType = async (req, res) => {
+  try {
+    const statusId = req.params.typeId;
+    const allStatus = await TypeModel.findByIdAndDelete(statusId);
+    if (!allStatus) {
+      return res
+        .status(400)
+        .send({ success: false, message: "No type found on that Id" });
+    }
+    res.status(200).send({
+      success: true,
+      message: "Following type deleted successfully",
+      data: allStatus,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal server error" });
+  }
+};
+
 module.exports.allquestions = async (req, res) => {
   try {
     const allQuestion = await QuestionModel.find();
@@ -251,6 +317,28 @@ module.exports.allquestions = async (req, res) => {
       success: true,
       message: "Following are the all Question",
       data: allQuestion,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal server error" });
+  }
+};
+
+module.exports.deleteQuestion = async (req, res) => {
+  try {
+    const statusId = req.params.questionId;
+    const allStatus = await QuestionModel.findByIdAndDelete(statusId);
+    if (!allStatus) {
+      return res
+        .status(400)
+        .send({ success: false, message: "No question found on that Id" });
+    }
+    res.status(200).send({
+      success: true,
+      message: "Following question deleted successfully",
+      data: allStatus,
     });
   } catch (error) {
     console.log(error);
@@ -288,6 +376,28 @@ module.exports.allAnswer = async (req, res) => {
       success: true,
       message: "Following are the all Answer",
       data: allAnswer,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal server error" });
+  }
+};
+
+module.exports.deleteAnswer = async (req, res) => {
+  try {
+    const statusId = req.params.answerId;
+    const allStatus = await AnswerModel.findByIdAndDelete(statusId);
+    if (!allStatus) {
+      return res
+        .status(400)
+        .send({ success: false, message: "No answer found on that Id" });
+    }
+    res.status(200).send({
+      success: true,
+      message: "Following answer deleted successfully",
+      data: allStatus,
     });
   } catch (error) {
     console.log(error);
@@ -357,6 +467,29 @@ module.exports.oneProject = async (req, res) => {
     res.status(200).send({
       success: true,
       message: "Following are the all Project",
+      data: allProject,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal server error" });
+  }
+};
+
+module.exports.deleteProject = async (req, res) => {
+  try {
+    const projectId = req.params.projectId;
+    const allProject = await ProjectModel.findByIdAndDelete(projectId);
+
+    if (!allProject) {
+      return res
+        .status(400)
+        .send({ success: false, message: "No project found on that Id" });
+    }
+    res.status(200).send({
+      success: true,
+      message: "Following project deleted successfully",
       data: allProject,
     });
   } catch (error) {

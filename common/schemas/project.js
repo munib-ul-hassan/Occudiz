@@ -1,4 +1,4 @@
-const ProjectSchema = {
+const ProjectCreateSchema = {
   type: "object",
   properties: {
     name: {
@@ -24,28 +24,99 @@ const ProjectSchema = {
     },
     status: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Status",
+        type: "string",
       },
     ],
     stage: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Stage",
+        type: "string",
       },
     ],
     answerId: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Answer",
+        type: "string",
       },
     ],
     assignedTo: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      type: "string",
     },
   },
   required: ["name"],
 };
 
-module.exports = { ProjectSchema };
+const updateProjectSchema = {
+  type: "object",
+  properties: {
+    name: {
+      type: "string",
+    },
+    detail: {
+      type: "string",
+    },
+    launchDate: {
+      type: "date",
+    },
+    type: [
+      {
+        type: "_id",
+        ref: "Type",
+      },
+    ],
+    porposalFrom: {
+      type: String,
+    },
+    myMeeting: {
+      type: Date,
+    },
+    status: [
+      {
+        type: "string",
+      },
+    ],
+    stage: [
+      {
+        type: "string",
+      },
+    ],
+    answerId: [
+      {
+        type: "string",
+      },
+    ],
+    assignedTo: {
+      type: "string",
+    },
+  },
+  required: [],
+};
+
+const questionCreateSchema = {
+  type: "object",
+  properties: {
+    question: { type: "string" },
+    type: { type: "string" },
+    options: { type: "string" },
+    direct: { type: "string" },
+    depAns: { type: "string" },
+  },
+  require: ["question", "type"],
+};
+
+const questionUpdateSchema = {
+  type: "object",
+  properties: {
+    question: { type: "string" },
+    type: { type: "string" },
+    options: { type: "string" },
+    direct: { type: "string" },
+    depAns: { type: "string" },
+  },
+  require: ["question", "type"],
+};
+
+module.exports = {
+  ProjectCreateSchema,
+  updateProjectSchema,
+  questionCreateSchema,
+  questionUpdateSchema,
+};
