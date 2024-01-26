@@ -542,3 +542,21 @@ module.exports.updateProject = async (req, res) => {
       .semd({ success: false, message: "Internal server error" });
   }
 };
+
+module.exports.allBusinessProject = async (req, res) => {
+  try {
+    const allProject = await ProjectModel.find({
+      porposalFrom: "Verify Suppliers",
+    });
+    res.status(200).send({
+      success: true,
+      message: "Following are the all Project",
+      data: allProject,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal server error" });
+  }
+};

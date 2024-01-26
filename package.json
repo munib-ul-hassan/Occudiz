@@ -8,8 +8,9 @@
     "ProjectHandler": "node project-service/src/app.js",
     "payments": "node payments-service/src/app.js",
     "chatting": "node chatting-service/src/app.js",
-    "start": "npm-run-all --parallel  userHandler ProjectHandler chatting payments",
-    "dev": "concurrently  \"nodemon userHandler-service/src/app.js\" \"nodemon project-service/src/app.js\" \"nodemon payments-service/src/app.js\" \"nodemon chatting-service/src/app.js\" \"nodemon API-Gateway/app.js\""
+    "bidding": "node bidding-service/src/app.js",
+    "start": "npm-run-all --parallel  userHandler ProjectHandler chatting payments biddimg",
+    "dev": "concurrently  \"nodemon userHandler-service/src/app.js\" \"nodemon project-service/src/app.js\" \"nodemon payments-service/src/app.js\" \"nodemon chatting-service/src/app.js\" \"nodemon bidding-service/src/app.js\" \"nodemon API-Gateway/app.js\" "
   },
   "keywords": [],
   "author": "",
