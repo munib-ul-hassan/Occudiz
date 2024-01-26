@@ -106,7 +106,6 @@ module.exports.UserRegister = async (req, res) => {
       hashedPassword: hashedPassword,
     });
     await newUser.save();
-    console.log(newUser._id.toString());
 
     const user = await UserModel.findById(newUser._id.toString());
     if (!user) {
@@ -119,7 +118,8 @@ module.exports.UserRegister = async (req, res) => {
       {
         id: newUser._id.toString(),
         email: user.email.toLowerCase(),
-        role: user.role,
+        roleId: user.role,
+        type: user.type
       },
       "30d"
     );
@@ -175,18 +175,13 @@ module.exports.login = async (req, res) => {
         .status(400)
         .send({ success: false, message: "Email or Password is required" });
     }
-    // email = email.toLowerCase();
 
-    // let user = await AdminModel.findOne({ email: email.toLowerCase() });
-
-    // if (!user) {
     user = await UserModel.findOne({ email: email.toLowerCase() });
     if (!user) {
       return res
         .status(400)
         .send({ success: false, message: "No user Found on that email" });
     }
-    // }
 
     const validPassword = await bcrypt.compare(password, user.hashedPassword);
     if (!validPassword) {
@@ -196,18 +191,22 @@ module.exports.login = async (req, res) => {
       });
     }
 
-    let token = JWT.sign({ userId: user._id }, process.env.JWT_SEC_USER);
-    if (!user.type) {
-      token = JWT.sign({ userId: user._id }, process.env.JWT_SEC_ADMIN);
-      user.type = "Admin";
-    }
+    user.token = generateJWT(
+      {
+        id: user._id.toString(),
+        email: user.email.toLowerCase(),
+        roleId: user.role,
+        type: user.type
+      },
+      "30d"
+    );
+
+    await user.save();
 
     res.status(200).send({
       success: true,
       message: "You are loged-In",
       data: user,
-      type: user.type,
-      token: token,
     });
   } catch (error) {
     console.log(error);
