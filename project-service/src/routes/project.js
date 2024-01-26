@@ -35,6 +35,11 @@ router.post(
   requireSchema(ProjectCreateSchema),
   projectController.projectCreate
 );
+router.post(
+  "/project/update/:projectId",
+  requireSchema(updateProjectSchema),
+  projectController.updateProject
+);
 router.get("/project/get/all", projectController.allProject);
 router.get("/project/get/one/:projectId", projectController.oneProject);
 router.delete("/project/delete/:projectId", projectController.deleteProject);

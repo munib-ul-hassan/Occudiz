@@ -499,3 +499,46 @@ module.exports.deleteProject = async (req, res) => {
       .send({ success: false, message: "Internal server error" });
   }
 };
+
+module.exports.updateProject = async (req, res) => {
+  try {
+    const {
+      name,
+      detial,
+      launchDate,
+      type,
+      porposalFrom,
+      answerId,
+      myMeeting,
+      status,
+      stage,
+    } = req.body;
+
+    const projectId = req.params.projectId;
+    const project = await ProjectModel.findById(projectId);
+    if (!project) {
+      return res
+        .status(400)
+        .send({ success: false, message: "No project found on that Id " });
+    }
+
+    project.name = name || project.name;
+    project.detial = detial || project.detial;
+    project.launchDate = launchDate || project.launchDate;
+    project.type = type || project.type;
+    project.porposalFrom = porposalFrom || project.porposalFrom;
+    project.answerId = answerId || project.answerId;
+    project.myMeeting = myMeeting || project.myMeeting;
+    project.status = status || project.status;
+    project.stage = stage || project.stage;
+    await project.save();
+    return res
+      .status(200)
+      .send({ success: true, message: "Project is updated", data: project });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .semd({ success: false, message: "Internal server error" });
+  }
+};
