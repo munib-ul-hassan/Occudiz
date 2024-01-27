@@ -2,7 +2,7 @@ const express = require("express");
 require("dotenv").config();
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const {authenticateWithToken}= require('../../common/middleware/auth');
+const { authenticateWithToken } = require("../../common/middleware/auth");
 
 const app = express();
 app.enable("json spaces");
@@ -15,7 +15,7 @@ app.use(authenticateWithToken);
 const mongodb = require("../../common/config/mongodb");
 mongodb();
 
-const PORT = process.env.PORT || 3003;
+const PORT = 8004;
 
 const auth = require("./routes/auth");
 app.use("/auth", auth);

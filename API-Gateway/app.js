@@ -9,11 +9,11 @@ const proxy = httpProxy.createProxyServer();
 app.use(morgan(morganLogger));
 
 const routes = {
-  "/chatting-service": "http://localhost:3000",
-  "/payments-service": "http://localhost:3001",
-  "/project-service": "http://localhost:3002",
-  "/userHandler-service": "http://localhost:3003",
-  "/bidding-service": "http://localhost:3004",
+  "/bidding-service": "http://localhost:8001",
+  "/payments-service": "http://localhost:8005",
+  "/project-service": "http://localhost:8003",
+  "/userHandler-service": "http://localhost:8004",
+  "/chatting-service": "http://localhost:8002",
 };
 
 for (const route in routes) {

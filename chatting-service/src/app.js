@@ -1,7 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv").config();
 const cors = require("cors");
-const {authenticateWithToken}= require('../../common/middleware/auth');
+const { authenticateWithToken } = require("../../common/middleware/auth");
 const app = express();
 
 app.use(cors());
@@ -13,7 +13,7 @@ const mongodb = require("../../common/config/mongodb");
 
 mongodb();
 
-const PORT = process.env.PORT || 3000;
+const PORT = 8002;
 
 app.listen(PORT, () => {
   try {
