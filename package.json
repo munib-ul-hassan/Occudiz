@@ -9,7 +9,7 @@
     "payments": "node payments-service/src/app.js",
     "chatting": "node chatting-service/src/app.js",
     "bidding": "node bidding-service/src/app.js",
-    "start": "npm-run-all --parallel  userHandler ProjectHandler chatting payments biddimg",
+    "start": "concurrently  \"node userHandler-service/src/app.js\" \"node project-service/src/app.js\" \"node payments-service/src/app.js\" \"node chatting-service/src/app.js\" \"node bidding-service/src/app.js\" \"node API-Gateway/app.js\"",
     "dev": "concurrently  \"nodemon userHandler-service/src/app.js\" \"nodemon project-service/src/app.js\" \"nodemon payments-service/src/app.js\" \"nodemon chatting-service/src/app.js\" \"nodemon bidding-service/src/app.js\" \"nodemon API-Gateway/app.js\" "
   },
   "keywords": [],
@@ -18,7 +18,7 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
-    "cloudinary": "^1.35.0",
+    "cloudinary": "^1.41.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.3.2",
