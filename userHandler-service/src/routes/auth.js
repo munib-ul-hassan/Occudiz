@@ -1,19 +1,32 @@
 const express = require("express");
 const authControler = require("../controller/auth");
 const {
-    registerSchema,
-    loginSchema,
-    updateSchemas,
+  registerSchema,
+  loginSchema,
+  updateSchemas,
 } = require("../../../common/schemas/userHandler-service");
 const {
-    requireSchema,
-    requireValidId,
+  requireSchema,
+  requireValidId,
 } = require("../../../common/middleware/validate");
-const { requireAdminUser, requireUser } = require("../../../common/middleware/auth");
+const {
+  authenticateWithToken,
+  requireUserProjectOwner,
+  requireUserFreeLancer,
+  requireUserBusiness,
+  requireUser,
+  requireCustomer,
+  requireMerchantOrAdminUser,
+  requireAdminUser,
+} = require("../../../common/middleware/auth");
 const router = express.Router();
 
 // router.post("/register/admin", authControler.AdminRegister);
-router.post("/register", requireSchema(registerSchema), authControler.UserRegister);
+router.post(
+  "/register",
+  requireSchema(registerSchema),
+  authControler.UserRegister
+);
 
 router.put("/verify/user/:id", requireAdminUser, authControler.verifyUser);
 
@@ -23,7 +36,11 @@ router.get("/all", authControler.getUser);
 
 router.post("/login", requireSchema(loginSchema), authControler.login);
 
-router.get("/all/freelancer", requireAdminUser, authControler.getUserFreeLancer);
+router.get(
+  "/all/freelancer",
+  requireAdminUser,
+  authControler.getUserFreeLancer
+);
 
 router.get("/all/Business", authControler.getUserBusiness);
 
@@ -34,9 +51,9 @@ router.use(requireUser);
 router.get("/one/:id", authControler.getOneUser);
 
 router.put(
-    "/update/:id",
-    requireSchema(updateSchemas),
-    authControler.updateUSer
+  "/update/:id",
+  requireSchema(updateSchemas),
+  authControler.updateUSer
 );
 
 module.exports = router;
