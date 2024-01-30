@@ -15,14 +15,13 @@ app.use(authenticateWithToken);
 const mongodb = require("../../common/config/mongodb");
 mongodb();
 
-const PORT = 8005;
 
 const payments = require("./routes/payments.js");
 app.use(payments);
 
-app.listen(PORT, () => {
+app.listen(process.env.PAYMENT_SERVICE_PORT, () => {
   try {
-    console.log(`Payments-MicroServices is started on port = ${PORT}`);
+    console.log(`Payments-MicroServices is started on port = ${process.env.PAYMENT_SERVICE_PORT}`);
   } catch (error) {
     console.log("Something Went wrong");
   }

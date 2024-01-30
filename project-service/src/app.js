@@ -13,15 +13,7 @@ const mongodb = require("../../common/config/mongodb");
 
 mongodb();
 
-const PORT = 8003;
 
-app.listen(PORT, () => {
-  try {
-    console.log(`Project-MicroServices is started on port = ${PORT}`);
-  } catch (error) {
-    console.log("Something Went wrong");
-  }
-});
 
 const project = require("./routes/project.js");
 
@@ -30,3 +22,11 @@ app.get("/", (req, res) => {
 });
 
 app.use("/", project);
+
+app.listen(process.env.PROJECT_SERVICE_PORT, () => {
+  try {
+    console.log(`Project-MicroServices is started on port = ${process.env.PROJECT_SERVICE_PORT}`);
+  } catch (error) {
+    console.log("Something Went wrong");
+  }
+});

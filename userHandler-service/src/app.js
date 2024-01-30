@@ -15,14 +15,12 @@ app.use(authenticateWithToken);
 const mongodb = require("../../common/config/mongodb");
 mongodb();
 
-const PORT = 8004;
-
 const auth = require("./routes/auth");
 app.use("/auth", auth);
 
-app.listen(PORT, () => {
+app.listen(process.env.USER_HANDLER_SERVICE_PORT, () => {
   try {
-    console.log(`userHandler-MicroServices is started on port = ${PORT}`);
+    console.log(`userHandler-MicroServices is started on port = ${process.env.USER_HANDLER_SERVICE_PORT}`);
   } catch (error) {
     console.log("Something Went wrong");
   }
