@@ -48,19 +48,36 @@ module.exports.createBidding = async (req, res) => {
         }
       }
     }
-    console.log(attachArtwork[0].url);
-    const newBid = new BiddingModel({
+
+    let documents;
+    if (attachArtwork.length > 0) documents = attachArtwork[0].url;
+
+    const newBit = new BiddingModel({
       userId,
       projectId,
       prices: validData.prices,
       message: validData.message,
-      documents: attachArtwork[0].url,
+      documents,
     });
-    return res.status(200).send({ success: true, data: newBid });
+    // userId.userBids - 1;
+    // await userId.save();
+    await newBit.save();
+    return res.status(200).send({ success: true, data: newBit });
   } catch (error) {
     console.log(error);
     return res
       .status(500)
       .send({ success: false, message: "Internal server error", error: error });
   }
+};
+
+module.exports.getAllBit = async (req, res) => {
+  try {
+    const allBit = await BiddingModel.find();
+    res.status(200).send({ success: true, data: allBit });
+  } catch (error) {}
+  console.log(error);
+  return res
+    .status(500)
+    .send({ success: false, message: "Internal server error" });
 };

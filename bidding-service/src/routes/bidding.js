@@ -26,4 +26,5 @@ router.post(
   biddingController.createBidding
 );
 
+router.get("/all/bit", biddingController.getAllBit);
 module.exports = router;
