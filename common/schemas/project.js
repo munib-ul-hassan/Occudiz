@@ -8,7 +8,7 @@ const ProjectCreateSchema = {
       type: "string",
     },
     launchDate: {
-      type: "date",
+      type: Date,
     },
     type: [
       {
@@ -17,7 +17,7 @@ const ProjectCreateSchema = {
       },
     ],
     porposalFrom: {
-      type: String,
+      type: "string",
     },
     myMeeting: {
       type: Date,

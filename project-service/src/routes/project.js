@@ -10,6 +10,16 @@ const {
   requireSchema,
   requireValidId,
 } = require("../../../common/middleware/validate");
+const {
+  authenticateWithToken,
+  requireUserProjectOwner,
+  requireUserFreeLancer,
+  requireUserBusiness,
+  requireUser,
+  requireCustomer,
+  requireMerchantOrAdminUser,
+  requireAdminUser,
+} = require("../../../common/middleware/auth");
 const router = express.Router();
 
 router.post("/status/create", projectController.statusCreate);
@@ -32,11 +42,13 @@ router.get("/answer/get/one/:ansId", projectController.oneAnswer);
 
 router.post(
   "/project/create",
+  requireUserProjectOwner,
   requireSchema(ProjectCreateSchema),
   projectController.projectCreate
 );
 router.post(
   "/project/update/:projectId",
+  requireUserProjectOwner,
   requireSchema(updateProjectSchema),
   projectController.updateProject
 );

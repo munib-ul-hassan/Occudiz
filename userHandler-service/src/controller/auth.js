@@ -79,7 +79,6 @@ module.exports.UserRegister = async (req, res) => {
   try {
     const result = req.body;
     result.email = result.email.toLowerCase();
-
     if (result.error) {
       const x = result.error.details.map((error) => error.message);
       return res.status(400).json({
@@ -97,11 +96,17 @@ module.exports.UserRegister = async (req, res) => {
         message: "Email is already exists",
       });
     }
+
+    let userBids = 5;
+
+    if (result.type == "Project-Owner") userBids = 0;
+
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(result.hashedPassword, salt);
+    const hashedPassword = await bcrypt.hash(result.password, salt);
 
     const newUser = new UserModel({
       ...result,
+      userBids,
       role,
       hashedPassword: hashedPassword,
     });
@@ -119,7 +124,7 @@ module.exports.UserRegister = async (req, res) => {
         id: newUser._id.toString(),
         email: user.email.toLowerCase(),
         roleId: user.role,
-        type: user.type
+        type: user.type,
       },
       "30d"
     );
@@ -196,7 +201,7 @@ module.exports.login = async (req, res) => {
         id: user._id.toString(),
         email: user.email.toLowerCase(),
         roleId: user.role,
-        type: user.type
+        type: user.type,
       },
       "30d"
     );

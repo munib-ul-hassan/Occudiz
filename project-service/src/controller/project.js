@@ -169,6 +169,8 @@ module.exports.answerCreate = async (req, res) => {
 
 module.exports.projectCreate = async (req, res) => {
   try {
+    const userId = req.user;
+    console.log(userId);
     const result = projectJoi.validate(req.body, {
       abortEarly: false,
     });
@@ -180,8 +182,9 @@ module.exports.projectCreate = async (req, res) => {
         message: x,
       });
     }
-
-    const newProject = new ProjectModel({ ...result.value });
+    const qwerty123 = result.value + userId.Id;
+    console.log(qwerty123);
+    const newProject = new ProjectModel({ ...result.value, userId });
 
     await newProject.save();
 

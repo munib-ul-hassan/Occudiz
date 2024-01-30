@@ -52,6 +52,10 @@ const UserSchema = new mongoose.Schema(
     fcmToken: {
       type: String,
     },
+    userBids: {
+      type: Number,
+      required: true,
+    },
   },
   { timestamps: true }
 );

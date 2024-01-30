@@ -15,15 +15,7 @@ const registerSchema = {
     active: { type: "boolean" },
     fcmToken: { type: "string" },
   },
-  required: [
-    "email",
-    "password",
-    "name",
-    "phoneNumber",
-    "role",
-    "type",
-    "active",
-  ],
+  required: ["email", "password", "name", "phoneNumber", "type"],
 };
 
 const loginSchema = {
