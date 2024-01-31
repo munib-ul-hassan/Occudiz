@@ -73,7 +73,10 @@ module.exports.createBidding = async (req, res) => {
 
 module.exports.getAllBit = async (req, res) => {
   try {
-    const allBit = await BiddingModel.find();
+    const allBit = await BiddingModel.find()
+      .populate("userId")
+      .populate("projectId");
+
     res.status(200).send({ success: true, data: allBit });
   } catch (error) {}
   console.log(error);
@@ -85,13 +88,17 @@ module.exports.getAllBit = async (req, res) => {
 module.exports.getOneBit = async (req, res) => {
   try {
     const bitId = req.params.bitId;
-    const allBit = await BiddingModel.findById(bitId);
-    if (allBit) {
+    console.log(bitId);
+    const allBit = await BiddingModel.findById(bitId)
+      .populate("userId")
+      .populate("projectId");
+
+    if (!allBit) {
       return res
         .status(400)
         .send({ success: false, message: "No bit found on that Id " });
     }
-    res.status(200).send({ success: true, data: allBit });
+    return res.status(200).send({ success: true, data: allBit });
   } catch (error) {}
   console.log(error);
   return res
@@ -102,9 +109,25 @@ module.exports.getOneBit = async (req, res) => {
 module.exports.getAllProjectBit = async (req, res) => {
   try {
     const projectId = req.params.projectId;
-    const allBit = await BiddingModel.find({ projectId });
+    const allBit = await BiddingModel.find({ projectId })
+      .populate("userId")
+      .populate("projectId");
 
-    res.status(200).send({ success: true, data: allBit });
+    return res.status(200).send({ success: true, data: allBit });
+  } catch (error) {}
+  console.log(error);
+  return res
+    .status(500)
+    .send({ success: false, message: "Internal server error" });
+};
+module.exports.getAllUserBit = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const allBit = await BiddingModel.find({ userId })
+      .populate("userId")
+      .populate("projectId");
+
+    return res.status(200).send({ success: true, data: allBit });
   } catch (error) {}
   console.log(error);
   return res
@@ -116,6 +139,33 @@ module.exports.updateBitting = async (req, res) => {
   try {
     const bitId = req.params.bitId;
     const { prices, documents, message } = req.body;
+
+    const files = req.files;
+    const attachArtwork = [];
+    if (files || files?.length < 1) {
+      for (const file of files) {
+        const { path } = file;
+        try {
+          const uploader = await cloudinary.uploader.upload(path, {
+            folder: "Occudiz",
+          });
+
+          attachArtwork.push({ url: uploader.secure_url });
+          if (fs.existsSync(path)) {
+            fs.unlinkSync(path);
+          } else {
+            console.log("File does not exist:", path);
+          }
+        } catch (err) {
+          if (attachArtwork?.length) {
+            // const imgs = imgObjs.map((obj) => obj.public_id);
+            // cloudinary.api.delete_resources(imgs);
+          }
+          console.log(err);
+        }
+      }
+    }
+
     const bit = await BiddingModel.findById(bitId);
     if (!bit) {
       return res
@@ -123,8 +173,10 @@ module.exports.updateBitting = async (req, res) => {
         .send({ success: false, message: "No bit found on that Id" });
     }
     bit.prices = prices || bit.prices;
-    bit.documents = documents || bit.documents;
-    bit.message = message || bit.message;
+    attachArtwork.length > 0
+      ? (bit.documents = attachArtwork[0].url)
+      : bit.documents,
+      (bit.message = message || bit.message);
     await bit.save();
 
     res

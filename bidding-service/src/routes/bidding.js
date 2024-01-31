@@ -27,7 +27,12 @@ router.post(
 );
 
 router.get("/all/bit", biddingController.getAllBit);
-router.get("/all/project/bit", biddingController.getAllProjectBit);
-router.get("/one/bit", biddingController.getOneBit);
-router.post("/update/bit", biddingController.updateBitting);
+router.get("/all/project/bit/:projectId", biddingController.getAllProjectBit);
+router.get("/all/user/bit/:userId", biddingController.getAllUserBit);
+router.get("/one/bit/:bitId", biddingController.getOneBit);
+router.post(
+  "/update/bit/:bitId",
+  upload.array("documents", 1),
+  biddingController.updateBitting
+);
 module.exports = router;
