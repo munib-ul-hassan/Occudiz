@@ -13,15 +13,6 @@ const mongodb = require("../../common/config/mongodb");
 
 mongodb();
 
-const PORT = 8001;
-
-app.listen(PORT, () => {
-  try {
-    console.log(`bidding-MicroServices is started on port = ${PORT}`);
-  } catch (error) {
-    console.log("Something Went wrong");
-  }
-});
 
 const bidding = require("./routes/bidding.js");
 
@@ -30,3 +21,11 @@ app.get("/", (req, res) => {
 });
 
 app.use("/", bidding);
+
+app.listen(process.env.BIDDING_SERVICE_PORT, () => {
+  try {
+    console.log(`bidding-MicroServices is started on port = ${process.env.BIDDING_SERVICE_PORT}`);
+  } catch (error) {
+    console.log("Something Went wrong");
+  }
+});
