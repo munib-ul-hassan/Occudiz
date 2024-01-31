@@ -27,4 +27,7 @@ router.post(
 );
 
 router.get("/all/bit", biddingController.getAllBit);
+router.get("/all/project/bit", biddingController.getAllProjectBit);
+router.get("/one/bit", biddingController.getOneBit);
+router.post("/update/bit", biddingController.updateBitting);
 module.exports = router;

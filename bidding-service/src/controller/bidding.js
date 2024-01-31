@@ -81,3 +81,59 @@ module.exports.getAllBit = async (req, res) => {
     .status(500)
     .send({ success: false, message: "Internal server error" });
 };
+
+module.exports.getOneBit = async (req, res) => {
+  try {
+    const bitId = req.params.bitId;
+    const allBit = await BiddingModel.findById(bitId);
+    if (allBit) {
+      return res
+        .status(400)
+        .send({ success: false, message: "No bit found on that Id " });
+    }
+    res.status(200).send({ success: true, data: allBit });
+  } catch (error) {}
+  console.log(error);
+  return res
+    .status(500)
+    .send({ success: false, message: "Internal server error" });
+};
+
+module.exports.getAllProjectBit = async (req, res) => {
+  try {
+    const projectId = req.params.projectId;
+    const allBit = await BiddingModel.find({ projectId });
+
+    res.status(200).send({ success: true, data: allBit });
+  } catch (error) {}
+  console.log(error);
+  return res
+    .status(500)
+    .send({ success: false, message: "Internal server error" });
+};
+
+module.exports.updateBitting = async (req, res) => {
+  try {
+    const bitId = req.params.bitId;
+    const { prices, documents, message } = req.body;
+    const bit = await BiddingModel.findById(bitId);
+    if (!bit) {
+      return res
+        .status(400)
+        .send({ success: false, message: "No bit found on that Id" });
+    }
+    bit.prices = prices || bit.prices;
+    bit.documents = documents || bit.documents;
+    bit.message = message || bit.message;
+    await bit.save();
+
+    res
+      .status(200)
+      .send({ success: false, message: "Updated successfully", data: bit });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal server error" });
+  }
+};
