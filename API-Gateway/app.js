@@ -7,6 +7,10 @@ const { morganLogger } = require("../common/utils/log.js");
 const app = express();
 const proxy = httpProxy.createProxyServer();
 
+app.get("/", (req, res) => {
+  res.status(200).send("server is running");
+});
+
 app.use(morgan(morganLogger));
 
 const routes = {
@@ -24,10 +28,11 @@ for (const route in routes) {
   });
 }
 
-
 app.listen(process.env.API_GATEWAY_PORT, () => {
   try {
-    console.log(`API GATEWAY is started on port = ${process.env.API_GATEWAY_PORT}`);
+    console.log(
+      `API GATEWAY is started on port = ${process.env.API_GATEWAY_PORT}`
+    );
   } catch (error) {
     console.log("Something Went wrong");
   }
