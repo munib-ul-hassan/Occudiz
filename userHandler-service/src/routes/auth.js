@@ -21,6 +21,7 @@ const {
 } = require("../../../common/middleware/auth");
 const router = express.Router();
 
+router.post("/email/verify", authControler.verifyOTP);
 // router.post("/register/admin", authControler.AdminRegister);
 router.post(
   "/register",
