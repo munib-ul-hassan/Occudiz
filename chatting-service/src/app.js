@@ -1,81 +1,138 @@
 const express = require("express");
 const dotenv = require("dotenv").config();
 const cors = require("cors");
-const amqp = require('amqplib');
 const { authenticateWithToken } = require("../../common/middleware/auth");
 const app = express();
 
-const http = require('http').Server(app);
-const io = require('socket.io')(http, {
-  cors: {
-    origin: "http://localhost:8000", //specific origin you want to give access to,
-  },
-});
+const cluster = require('node:cluster');
+const http = require('node:http');
+const numCPUs = require('node:os').availableParallelism();
+const process = require('node:process');
+const { setupMaster, setupWorker } = require("@socket.io/sticky");
+const { createAdapter, setupPrimary } = require("@socket.io/cluster-adapter");
+const { Server } = require("socket.io");
+const amqp = require('amqplib');
+const path = require('path');
+
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(authenticateWithToken);
+app.use(express.static(path.join(__dirname, 'public')));
 
 const mongodb = require("../../common/config/mongodb");
 mongodb();
 
-app.get('/test', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
-});
-
-
 let channel;
-
-async function setupRabbitMQ() {
-  const connection = await amqp.connect(process.env.AMQP_URL);
-  channel = await connection.createChannel();
-  await channel.assertExchange(process.env.EXCHANGE_NAME, 'fanout', { durable: false });
-}
-
-io.on('connection', (socket) => {
-  console.log('User connected: ' + socket.id);
-
-  socket.on('join', (userId) => {
-    // Create a queue for each user and bind it to the exchange
-    const queueName = `user_${userId}`;
-    channel.assertQueue(queueName, { durable: false });
-    channel.bindQueue(queueName, process.env.EXCHANGE_NAME, '');
-
-    // Listen for messages from the user's queue
-    channel.consume(queueName, (msg) => {
-      const message = msg.content.toString();
-      socket.emit('message', message);
-    }, { noAck: true });
-  });
-
-  socket.on('sendMessage', async ({ senderId, receiverId, message }) => {
-    // Send the message to the exchange, which will forward it to all connected users
-    const exchange = process.env.EXCHANGE_NAME;
-    let data = {
-      "senderId": senderId,
-      "receiverId": receiverId,
-      "message": message
-    }
-    channel.publish(exchange, '', Buffer.from(JSON.stringify(data)));
-
-    // Send the message to the specific user's queue
-    const userQueue = `user_${receiverId}`;
-    channel.sendToQueue(userQueue, Buffer.from(JSON.stringify(data)));
-  });
-
-  socket.on('disconnect', () => {
-    console.log('User disconnected: ' + socket.id);
-  });
-});
-
-
-http.listen(process.env.CHATTING_SERVICE_PORT, () => {
+const connectRabbitMQ = async () => {
   try {
-    console.log(`Chatting-MicroServices is started on port = ${process.env.CHATTING_SERVICE_PORT}`);
-    setupRabbitMQ().then(() => {
-      console.log('Connected to RabbitMQ');
-    });
+    const connection = await amqp.connect('amqp://localhost');
+    channel = await connection.createChannel();
+
+    // Now you can use the 'channel' to interact with RabbitMQ
+
+    // For example, create a queue
+    const queueName = 'chat_messages';
+    await channel.assertQueue(queueName, { durable: false });
+
+    // Close the connection when done
+    // connection.close();
   } catch (error) {
-    console.log("Something Went wrong");
+    console.error('Error connecting to RabbitMQ:', error.message);
   }
-});
+};
+
+/**
+ * Checking if the thread is a worker thread
+ * or primary thread.
+ */
+if (cluster.isPrimary) {
+  console.log(`Primary ${process.pid} is running`);
+
+  /**
+  * Creating http-server for the master.
+  * All the child workers will share the same port (3000)
+  */
+  const httpServer = http.createServer();
+  httpServer.listen(process.env.CHATTING_SERVICE_PORT, () => {
+    try {
+      console.log(`Chatting-MicroServices is started on port = ${process.env.CHATTING_SERVICE_PORT}`);
+      connectRabbitMQ().then(() => {
+        console.log('Connected to RabbitMQ');
+      });
+    } catch (error) {
+      console.log("Something Went wrong" + error);
+    }
+  });
+
+  // Setting up stick session
+  setupMaster(httpServer, {
+    loadBalancingMethod: "least-connection"
+  });
+
+  // Setting up communication between workers and primary
+  setupPrimary();
+  cluster.setupPrimary({
+    serialization: "advanced"
+  });
+
+  // Launching workers based on the number of CPU threads.
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+
+  cluster.on('exit', (worker, code, signal) => {
+    console.log(`worker ${worker.process.pid} died`);
+  });
+} else {
+  /**
+   * Setting up the worker threads
+   */
+
+  console.log(`Worker ${process.pid} started`);
+
+  /**
+   * Creating Express App and Socket.io Server
+   * and binding them to HTTP Server.
+   */
+  const httpServer = http.createServer(app);
+  const io = new Server(httpServer, {
+    cors: {
+      origin: "http://localhost:8000", //specific origin you want to give access to,
+    },
+  });
+  // Using the cluster socket.io adapter.
+  io.adapter(createAdapter());
+
+  // Setting up worker connection with the primary thread.
+  setupWorker(io);
+
+  io.on("connection", async (socket) => {
+    const connection = await amqp.connect('amqp://localhost');
+    const queueName = 'chat_messages';
+    channel = await connection.createChannel();
+
+    // Now you can use the 'channel' to interact with RabbitMQ
+    await channel.assertQueue(queueName, { durable: false });
+    // Handling socket connections.
+    socket.on("message", async (data) => {
+      console.log(`Message arrived at ${process.pid}:`, data);
+      channel.sendToQueue("chat_messages", Buffer.from(JSON.stringify(data)));
+      io.emit("message", data);
+    });
+
+
+    const handleMessage = (msg) => {
+      const content = msg.content.toString();
+      socket.emit("historical_messages", content);
+      console.log(`Received message: ${content}`);
+    };
+
+    channel.consume(queueName, handleMessage, { noAck: true });
+  });
+
+  // Handle HTTP Requests
+  app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, 'contrpublic', "index.html"))
+  });
+}

@@ -52,4 +52,4 @@ const messageSchema = new mongoose.Schema({
 const Room = mongoose.model('Room', roomSchema);
 const Message = mongoose.model('Message', messageSchema);
 
-module.exports = { User, Room, Message };
+module.exports = { Room, Message };
