@@ -56,6 +56,14 @@ const UserSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    sub: {
+      type: String,
+      required: true,
+      enum: ["normal", "five", "thentyFive"],
+    },
+    otp: {
+      type: Number,
+    },
   },
   { timestamps: true }
 );

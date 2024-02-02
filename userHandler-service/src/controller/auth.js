@@ -86,7 +86,11 @@ module.exports.UserRegister = async (req, res) => {
         message: x,
       });
     }
+
     const role = 2;
+    let userBids = 5;
+    const sub = "normal";
+
     const existingEmail = await UserModel.findOne({
       email: result.email,
     });
@@ -97,9 +101,9 @@ module.exports.UserRegister = async (req, res) => {
       });
     }
 
-    let userBids = 5;
-
     if (result.type == "Project-Owner") userBids = 0;
+
+    const otp = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(result.password, salt);
@@ -107,6 +111,8 @@ module.exports.UserRegister = async (req, res) => {
     const newUser = new UserModel({
       ...result,
       userBids,
+      otp,
+      sub,
       role,
       hashedPassword: hashedPassword,
     });
@@ -139,6 +145,32 @@ module.exports.UserRegister = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send({ success: false, message: error });
+  }
+};
+
+module.exports.verifyOTP = async (req, res) => {
+  try {
+    const { otpToken, email } = req.body;
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return res
+        .status(400)
+        .send({ success: false, message: "No user found on that email" });
+    }
+    if (!user.otp === otpToken) {
+      return res
+        .status(400)
+        .send({ success: false, message: "Otp is not same" });
+    }
+    delete user.otp;
+    res
+      .status(200)
+      .send({ success: true, message: "Otp verifyed successfully" });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .send({ success: false, message: "Internal server error " });
   }
 };
 
