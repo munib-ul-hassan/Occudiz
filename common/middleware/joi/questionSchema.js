@@ -30,7 +30,7 @@ const questionJoi = Joi.object({
   }),
   depAns: Joi.when("direct", {
     is: false,
-    then: Joi.array().items(Joi.array()).min(1).required(),
+    then: Joi.string().required(),
     otherwise: Joi.forbidden(),
   }),
 });

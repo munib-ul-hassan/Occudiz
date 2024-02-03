@@ -21,19 +21,7 @@ const userJoi = Joi.object({
     "string.max": "Password cannot be longer than 40 characters",
     "any.required": "Password is required",
   }),
-  phoneNumber: Joi.number()
-    .integer()
-    .min(1e9) // Minimum value is 10^9
-    .max(1e10 - 1) // Maximum value is 10^10 - 1
-    .required()
-    .messages({
-      "number.base": "Phone number should be a number",
-      "number.empty": "Phone number cannot be empty",
-      "number.integer": "Phone number should be an integer",
-      "number.min": "Phone number should have at least 10 digits",
-      "number.max": "Phone number should have at most 10 digits",
-      "any.required": "Phone number is required",
-    }),
+  phoneNumber: Joi.string(),
   type: Joi.string()
     .required()
     .valid("Project-Owner", "FreeLancer", "Business"),

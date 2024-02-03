@@ -6,7 +6,7 @@ const registerSchema = {
     password: {
       type: "string", // minLength: 8, pattern: PASSWORD_REGEX
     },
-    phoneNumber: { type: "number" },
+    phoneNumber: { type: "string" },
     role: { type: "number" },
     token: { type: "string" },
     type: { type: "string" },

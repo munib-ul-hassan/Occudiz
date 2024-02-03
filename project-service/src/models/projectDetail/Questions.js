@@ -29,12 +29,9 @@ const QuestionSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Question",
   },
-  depAns: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "AnswerInAnswer",
-    },
-  ],
+  depAns: {
+    type: String,
+  },
 });
 
 const QuestionModel = mongoose.model("Question", QuestionSchema);

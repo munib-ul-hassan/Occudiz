@@ -17,7 +17,6 @@ const UserSchema = new mongoose.Schema(
     },
     phoneNumber: {
       type: String,
-      require: true,
     },
     role: {
       type: Number,
@@ -63,6 +62,9 @@ const UserSchema = new mongoose.Schema(
     },
     otp: {
       type: Number,
+    },
+    stripe_Id: {
+      type: String,
     },
   },
   { timestamps: true }

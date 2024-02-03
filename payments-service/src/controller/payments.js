@@ -7,20 +7,21 @@ module.exports.createCustomerStripe = async (req, res) => {
     const param = {};
     param.name = userId.name;
     param.email = userId.email;
-    console.log(param);
     const user = Stripe.customers.create(param, (error, customer) => {
       if (error) {
         return res.status(400).send({ success: false, error: error });
       }
       if (customer) {
-        return res.status(200).send({ success: true, data: csutomer });
+        res.status(200).send({ success: true, data: customer });
       } else {
         return res
           .status(400)
           .send({ success: false, message: "SomeThing went wrong" });
       }
+      userId.stripe_Id = customer.id;
+      userId.save();
+      console.log(userId);
     });
-    console.log(user);
   } catch (error) {
     console.log(error);
     res.status(500).send({ success: false, message: "Internal server error" });
