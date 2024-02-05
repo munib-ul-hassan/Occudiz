@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const userJoi = require("../../../common/middleware/joi/userSchema");
 const config = require("../../../common/utils/config");
 const SECRET = config.JWT_SECRET;
+const cloudinary = require("../../../common/middleware/cloudinary");
+const fs = require("fs");
 
 const JWT = require("jsonwebtoken");
 const generateJWT = (payload, expires = "24h") =>
@@ -77,7 +79,9 @@ module.exports.verifyUser = async (req, res) => {
 
 module.exports.UserRegister = async (req, res) => {
   try {
+    console.log("start");
     const result = req.body;
+    console.log("🚀 ~ module.exports.UserRegister= ~ result:", result);
     result.email = result.email.toLowerCase();
     if (result.error) {
       const x = result.error.details.map((error) => error.message);
@@ -86,6 +90,71 @@ module.exports.UserRegister = async (req, res) => {
         message: x,
       });
     }
+
+    const files = req.files;
+    // const attachArtwork = [];
+    // if (files || files?.length < 1) {
+    //   for (const file of files) {
+    //     const { path } = file;
+    //     try {
+    //       const uploader = await cloudinary.uploader.upload(path, {
+    //         folder: "Occudiz",
+    //       });
+
+    //       attachArtwork.push({ url: uploader.secure_url });
+    //       if (fs.existsSync(path)) {
+    //         fs.unlinkSync(path);
+    //       } else {
+    //         console.log("File does not exist:", path);
+    //       }
+    //     } catch (err) {
+    //       if (attachArtwork?.length) {
+    //         // const imgs = imgObjs.map((obj) => obj.public_id);
+    //         // cloudinary.api.delete_resources(imgs);
+    //       }
+    //       console.log(err);
+    //     }
+    //   }
+    // }
+
+    if (!files || files?.length < 1) {
+    }
+
+    const attachArtwork = {
+      idCard: [],
+      businessRegisterNum: [],
+    };
+    // return res.status(401).json({
+    //   success: false,
+    //   message: "You have to upload at least one image to the listing",
+    // });
+    for (const fileArray in files) {
+      for (const file in files[fileArray]) {
+        try {
+          const uploader = await cloudinary.uploader.upload(
+            files[fileArray][file].path,
+            {
+              folder: "occudiz",
+            }
+          );
+          attachArtwork[fileArray].push({
+            url: uploader.secure_url,
+            type: fileArray,
+          });
+          fs.unlinkSync(files[fileArray][file].path);
+        } catch (err) {
+          if (attachArtwork[fileArray]?.length) {
+            const imgs = attachArtwork[fileArray].map((obj) => obj.public_id);
+            cloudinary.api.delete_resources(imgs);
+          }
+          console.log(err);
+        }
+      }
+    }
+    console.log(
+      attachArtwork.idCard.map((x) => x.url),
+      attachArtwork.businessRegisterNum
+    );
 
     const role = 2;
     let userBids = 5;
@@ -113,6 +182,8 @@ module.exports.UserRegister = async (req, res) => {
       userBids,
       otp,
       sub,
+      idCard: attachArtwork.idCard.map((x) => x.url),
+      businessRegisterNum: attachArtwork.businessRegisterNum.map((x) => x.url),
       role,
       hashedPassword: hashedPassword,
     });

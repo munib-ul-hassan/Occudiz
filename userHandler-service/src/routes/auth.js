@@ -19,12 +19,18 @@ const {
   requireMerchantOrAdminUser,
   requireAdminUser,
 } = require("../../../common/middleware/auth");
-const router = express.Router();
+const upload = require("../../../common/middleware/multer.js");
 
+const router = express.Router();
+// const upload =
 router.post("/email/verify", authControler.verifyOTP);
 // router.post("/register/admin", authControler.AdminRegister);
 router.post(
   "/register",
+  upload.fields([
+    { name: "idCard", maxCount: 2 },
+    { name: "businessRegisterNum", maxCount: 2 },
+  ]),
   requireSchema(registerSchema),
   authControler.UserRegister
 );

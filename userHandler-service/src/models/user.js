@@ -31,18 +31,22 @@ const UserSchema = new mongoose.Schema(
       require: true,
       enum: ["Project-Owner", "FreeLancer", "Business"],
     },
-    idCard: {
-      type: String,
-      require: function () {
-        return this.type === "FreeLancer" || this.type === "Business";
+    idCard: [
+      {
+        type: String,
+        require: function () {
+          return this.type === "FreeLancer" || this.type === "Business";
+        },
       },
-    },
-    businessRegisterNum: {
-      type: String,
-      require: function () {
-        return this.type === "Business";
+    ],
+    businessRegisterNum: [
+      {
+        type: String,
+        require: function () {
+          return this.type === "Business";
+        },
       },
-    },
+    ],
     active: {
       type: Boolean,
       required: true,
