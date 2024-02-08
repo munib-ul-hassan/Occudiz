@@ -322,7 +322,9 @@ module.exports.deleteStage = async (req, res) => {
 
 module.exports.allquestions = async (req, res) => {
   try {
-    const allQuestion = await QuestionModel.find();
+    const allQuestion = await QuestionModel.find().populate("depQue");
+    allQuestion.sort((a) => (a.direct == true ? -1 : 1));
+
     res.status(200).send({
       success: true,
       message: "Following are the all Question",

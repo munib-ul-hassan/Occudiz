@@ -37,6 +37,7 @@ router.post(
 );
 
 router.get("/question/get/all", projectController.allquestions);
+router.post("/answer/create/:questionId", projectController.answerCreate);
 router.use(requireUser);
 
 router.post("/status/create", projectController.statusCreate);
@@ -51,7 +52,6 @@ router.delete("/stage/delete/:stageId", projectController.deleteStage);
 router.post("/question/create", projectController.questionCreate);
 router.delete("/question/delete/:questionId", projectController.deleteQuestion);
 router.get("/question/get/one/:queId", projectController.oneQuestion);
-router.post("/answer/create/:questionId", projectController.answerCreate);
 router.get("/answer/get/all", projectController.allAnswer);
 router.delete("/answer/delete/:answerId", projectController.deleteAnswer);
 router.get("/answer/get/one/:ansId", projectController.oneAnswer);

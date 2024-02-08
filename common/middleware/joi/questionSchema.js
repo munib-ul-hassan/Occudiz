@@ -1,7 +1,7 @@
 const Joi = require("joi");
 
 const questionJoi = Joi.object({
-  question: Joi.string().required().min(5).max(100).messages({
+  question: Joi.string().required().min(5).max(500).messages({
     "string.base": "Question should be a string",
     "string.empty": "Question cannot be empty",
     "string.min": "Question has to be at least 5 characters long",
