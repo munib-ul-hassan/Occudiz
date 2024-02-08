@@ -51,6 +51,9 @@ const ProjectSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    color: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

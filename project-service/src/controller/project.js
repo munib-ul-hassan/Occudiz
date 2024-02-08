@@ -1,6 +1,6 @@
 const ProjectModel = require("../models/project");
 const StatusModel = require("../models/projectDetail/status");
-const TypeModel = require("../models/projectDetail/type");
+// const TypeModel = require("../models/projectDetail/type");
 const AnswerModel = require("../models/projectDetail/answer");
 const QuestionModel = require("../models/projectDetail/Questions");
 const questionJoi = require("../../../common/middleware/joi/questionSchema");
@@ -72,37 +72,37 @@ module.exports.stageCreate = async (req, res) => {
   }
 };
 
-module.exports.typeCreate = async (req, res) => {
-  try {
-    const type = req.body.type;
-    if (!type) {
-      return res.status(400).send({
-        success: false,
-        message: "You have to provide a Status field",
-      });
-    }
-    const types = type.toLowerCase();
-    console.log(types);
-    const existingStatus = await TypeModel.findOne({ type: types });
-    if (existingStatus) {
-      return res
-        .status(400)
-        .send({ success: false, message: "This type is alredy added" });
-    }
-    const newStatus = new TypeModel({
-      type: types,
-    });
-    await newStatus.save();
-    res.status(200).send({
-      success: true,
-      message: "New type has been added",
-      data: newStatus,
-    });
-  } catch (error) {
-    cosnole.log(error);
-    res.status(500).send({ success: false, message: "Internal server error " });
-  }
-};
+// module.exports.typeCreate = async (req, res) => {
+//   try {
+//     const type = req.body.type;
+//     if (!type) {
+//       return res.status(400).send({
+//         success: false,
+//         message: "You have to provide a Status field",
+//       });
+//     }
+//     const types = type.toLowerCase();
+//     console.log(types);
+//     const existingStatus = await TypeModel.findOne({ type: types });
+//     if (existingStatus) {
+//       return res
+//         .status(400)
+//         .send({ success: false, message: "This type is alredy added" });
+//     }
+//     const newStatus = new TypeModel({
+//       type: types,
+//     });
+//     await newStatus.save();
+//     res.status(200).send({
+//       success: true,
+//       message: "New type has been added",
+//       data: newStatus,
+//     });
+//   } catch (error) {
+//     cosnole.log(error);
+//     res.status(500).send({ success: false, message: "Internal server error " });
+//   }
+// };
 
 module.exports.questionCreate = async (req, res) => {
   try {
@@ -175,6 +175,7 @@ module.exports.projectCreate = async (req, res) => {
       abortEarly: false,
     });
     console.log(result);
+
     if (result.error) {
       const x = result.error.details.map((error) => error.message);
       return res.status(400).json({
@@ -182,9 +183,15 @@ module.exports.projectCreate = async (req, res) => {
         message: x,
       });
     }
-    const qwerty123 = result.value + userId.Id;
-    console.log(qwerty123);
-    const newProject = new ProjectModel({ ...result.value, userId });
+    const color = Math.floor(Math.random() * 16777215)
+      .toString(16)
+      .padStart(6, "0");
+
+    const newProject = new ProjectModel({
+      ...result.value,
+      userId,
+      color: `${color}40`,
+    });
 
     await newProject.save();
 
@@ -275,43 +282,43 @@ module.exports.deleteStage = async (req, res) => {
   }
 };
 
-module.exports.allType = async (req, res) => {
-  try {
-    const allType = await TypeModel.find();
-    res.status(200).send({
-      success: true,
-      message: "Following are the all type",
-      data: allType,
-    });
-  } catch (error) {
-    console.log(error);
-    return res
-      .status(500)
-      .send({ success: false, message: "Internal server error" });
-  }
-};
+// module.exports.allType = async (req, res) => {
+//   try {
+//     const allType = await TypeModel.find();
+//     res.status(200).send({
+//       success: true,
+//       message: "Following are the all type",
+//       data: allType,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     return res
+//       .status(500)
+//       .send({ success: false, message: "Internal server error" });
+//   }
+// };
 
-module.exports.deleteType = async (req, res) => {
-  try {
-    const statusId = req.params.typeId;
-    const allStatus = await TypeModel.findByIdAndDelete(statusId);
-    if (!allStatus) {
-      return res
-        .status(400)
-        .send({ success: false, message: "No type found on that Id" });
-    }
-    res.status(200).send({
-      success: true,
-      message: "Following type deleted successfully",
-      data: allStatus,
-    });
-  } catch (error) {
-    console.log(error);
-    return res
-      .status(500)
-      .send({ success: false, message: "Internal server error" });
-  }
-};
+// module.exports.deleteType = async (req, res) => {
+//   try {
+//     const statusId = req.params.typeId;
+//     const allStatus = await TypeModel.findByIdAndDelete(statusId);
+//     if (!allStatus) {
+//       return res
+//         .status(400)
+//         .send({ success: false, message: "No type found on that Id" });
+//     }
+//     res.status(200).send({
+//       success: true,
+//       message: "Following type deleted successfully",
+//       data: allStatus,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     return res
+//       .status(500)
+//       .send({ success: false, message: "Internal server error" });
+//   }
+// };
 
 module.exports.allquestions = async (req, res) => {
   try {
@@ -436,7 +443,11 @@ module.exports.oneAnswer = async (req, res) => {
 
 module.exports.allProject = async (req, res) => {
   try {
-    const allProject = await ProjectModel.find();
+    const allProject = await ProjectModel.find()
+      // .populate({ path: "type", select: "type" })
+      .populate("status")
+      .populate("stage")
+      .populate("answerId");
     res.status(200).send({
       success: true,
       message: "Following are the all Project",
@@ -549,8 +560,12 @@ module.exports.updateProject = async (req, res) => {
 module.exports.allBusinessProject = async (req, res) => {
   try {
     const allProject = await ProjectModel.find({
-      porposalFrom: "Verify Suppliers",
-    });
+      porposalFrom: "All Suppliers",
+    })
+      // .populate("type")
+      .populate("status")
+      .populate("stage")
+      .populate("answerId");
     res.status(200).send({
       success: true,
       message: "Following are the all Project",

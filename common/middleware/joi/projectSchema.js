@@ -23,7 +23,7 @@ const projectJoi = Joi.object({
     "string.max": "Name cannot be longer than 30 characters",
     "any.required": "Name is required",
   }),
-  detial: Joi.string().min(20).required(),
+  detail: Joi.string().min(20).required(),
   launchDate: Joi.date().required().messages({
     "string.base": `"launch Date" should be a type of Date`,
     "string.empty": `"launch Date" cannot be an empty field`,
