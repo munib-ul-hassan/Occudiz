@@ -38,9 +38,11 @@ router.post(
 
 router.get("/question/get/all", projectController.allquestions);
 router.post("/answer/create/:questionId", projectController.answerCreate);
+router.get("/time/get/all", projectController.getAllWorking);
 router.use(requireUser);
 
 router.post("/status/create", projectController.statusCreate);
+router.post("/work/create", projectController.workingDateCreate);
 router.get("/status/get/all", projectController.allStatus);
 router.delete("/status/delete/:statusId", projectController.deleteStatus);
 router.post("/stage/create", projectController.stageCreate);

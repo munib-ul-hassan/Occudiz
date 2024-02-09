@@ -23,5 +23,6 @@ router.post("/create-payment", (req, res) => {
 });
 
 router.post("/create", authenticateWithToken, Payments.createCustomerStripe);
+router.post("/paymentMethod", authenticateWithToken, Payments.userPayment);
 
 module.exports = router;

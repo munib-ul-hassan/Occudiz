@@ -16,19 +16,15 @@ const ProjectSchema = new mongoose.Schema(
     launchDate: {
       type: Date,
     },
-    type: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Type",
-      },
-    ],
     porposalFrom: {
       type: String,
       enum: ["Verify Suppliers", "All Suppliers"],
     },
-    myMeeting: {
-      type: Date,
-    },
+    myMeeting: [
+      {
+        type: String,
+      },
+    ],
     status: [
       {
         type: mongoose.Schema.Types.ObjectId,

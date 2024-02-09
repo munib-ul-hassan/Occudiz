@@ -28,69 +28,28 @@ module.exports.createCustomerStripe = async (req, res) => {
   }
 };
 
-// const userPayment = async (req, res) => {
-//   try {
-//     const { project } = req.body;
-//     if (!project) {
-//       return res.status(400).send({
-//         success: false,
-//         message: "no project found ",
-//       });
-//     }
-//     const price = await priceingProject.find({ _id: project });
-//     const prices = price[0].prices;
-//     const orderCompleted = price[0].orderCompleted;
-//     const userID = await priceingProject.find({ _id: project }).populate({
-//       path: "TaskId",
-//       populate: { path: "orderId", populate: { path: "userId" } },
-//     });
-//     const user = userID[0].TaskId.orderId.userId._id;
-//     const email = userID[0].TaskId.orderId.userId.email;
-//     const productType = userID[0].TaskId.orderId.orderType;
-//     const taskID = userID[0].TaskId._id;
-//     const designer = userID[0].TaskId.designerId._id;
+module.exports.userPayment = async (req, res) => {
+  try {
+    const { number, exp_month, exp_year, cvc } = req.body;
+    console.log("🚀 ~ module.exports.userPayment= ~ body:", req.body);
 
-//     const session = await stripe.checkout.sessions.create({
-//       payment_method_types: ["card"],
-//       line_items: [
-//         {
-//           price_data: {
-//             currency: "usd",
-//             product_data: {
-//               name: productType,
-//             },
-//             unit_amount: prices * 100,
-//           },
-//           quantity: 1,
-//         },
-//       ],
-//       customer_email: email,
-//       mode: "payment",
-//       success_url:
-//         "https://geekslogicity.com/success?session_id={CHECKOUT_SESSION_ID}", // Replace with your success URL
-//       cancel_url: "https://your-website.com/cancel", // Replace with your cancel URL
-//     });
-//     console.log(session);
-//     const Stripe_url = session.url;
-
-//     const result = new Payment({
-//       userId: user,
-//       orderCompleted: orderCompleted,
-//       designerId: designer,
-//       TaskId: taskID,
-//       prices: prices,
-//       stripe_url: Stripe_url,
-//     });
-//     await result.save();
-//     res.status(200).send({
-//       success: true,
-//       message: "payment added successfully",
-//       Stripe_url,
-//     });
-//   } catch (err) {
-//     res.status(500).send(err);
-//   }
-// };
+    const paymentMethod = await Stripe.paymentMethods.create({
+      type: "card",
+      card: {
+        number: number,
+        exp_month: exp_month,
+        exp_year: exp_year,
+        cvc: cvc,
+      },
+    });
+    res.status(200).send({ success: true, data: paymentMethod });
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .send({ success: false, message: "Internal server error", error: err });
+  }
+};
 
 // const CompletePayment = async (req, res) => {
 //   try {

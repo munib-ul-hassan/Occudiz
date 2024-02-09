@@ -29,9 +29,7 @@ const projectJoi = Joi.object({
     "string.empty": `"launch Date" cannot be an empty field`,
     "any.required": `"launch Date" is a required field`,
   }),
-  type: Joi.string()
-    .pattern(/^[a-f\d]{24}$/i)
-    .required(),
+
   porposalFrom: Joi.string()
     .valid("Verify Suppliers", "All Suppliers")
     .required()
@@ -41,7 +39,7 @@ const projectJoi = Joi.object({
       "any.required": `"Porposal From" is a required field`,
     }),
   answerId: Joi.array().required(),
-  myMeeting: Joi.date(),
+  myMeeting: Joi.array(),
   status: Joi.string()
     .pattern(/^[a-f\d]{24}$/i)
     .required(),

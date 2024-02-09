@@ -5,6 +5,7 @@ const AnswerModel = require("../models/projectDetail/answer");
 const QuestionModel = require("../models/projectDetail/Questions");
 const questionJoi = require("../../../common/middleware/joi/questionSchema");
 const StageModel = require("../models/projectDetail/stage");
+const WorkingDate = require("../models/projectDetail/avalibleDate");
 const projectJoi = require("../../../common/middleware/joi/projectSchema");
 // const projectJoi = require("../../../common/middleware/joi/projectSchemas");
 
@@ -72,37 +73,28 @@ module.exports.stageCreate = async (req, res) => {
   }
 };
 
-// module.exports.typeCreate = async (req, res) => {
-//   try {
-//     const type = req.body.type;
-//     if (!type) {
-//       return res.status(400).send({
-//         success: false,
-//         message: "You have to provide a Status field",
-//       });
-//     }
-//     const types = type.toLowerCase();
-//     console.log(types);
-//     const existingStatus = await TypeModel.findOne({ type: types });
-//     if (existingStatus) {
-//       return res
-//         .status(400)
-//         .send({ success: false, message: "This type is alredy added" });
-//     }
-//     const newStatus = new TypeModel({
-//       type: types,
-//     });
-//     await newStatus.save();
-//     res.status(200).send({
-//       success: true,
-//       message: "New type has been added",
-//       data: newStatus,
-//     });
-//   } catch (error) {
-//     cosnole.log(error);
-//     res.status(500).send({ success: false, message: "Internal server error " });
-//   }
-// };
+module.exports.workingDateCreate = async (req, res) => {
+  try {
+    const { workingDays, holidays, workingTime } = req.body;
+    const newWork = new WorkingDate({
+      workingDays,
+      holidays,
+      workingTime,
+    });
+    await newWork.save();
+    return res.status(200).send({ success: true, data: newWork });
+  } catch (error) {
+    console.log(error);
+    return res.ses
+      .status(500)
+      .send({ success: false, message: "Internal server eroor", error });
+  }
+};
+
+module.exports.getAllWorking = async (req, res) => {
+  const allData = await WorkingDate.find();
+  res.status(200).send({ success: true, data: allData });
+};
 
 module.exports.questionCreate = async (req, res) => {
   try {
