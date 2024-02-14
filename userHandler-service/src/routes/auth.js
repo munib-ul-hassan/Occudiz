@@ -35,8 +35,6 @@ router.post(
   authControler.UserRegister
 );
 
-router.put("/verify/user/:id", requireAdminUser, authControler.verifyUser);
-
 // router.get("/all/admin", authControler.getAdmin);
 
 router.get("/all", authControler.getUser);
@@ -54,12 +52,20 @@ router.get("/all/Business", authControler.getUserBusiness);
 router.get("/all/Project-Owner", authControler.getUserProjectOwner);
 
 router.use(requireUser);
+router.put(
+  "/verify/user/:id",
+
+  authControler.verifyUser
+);
 
 router.get("/one/:id", authControler.getOneUser);
 
-router.put(
+router.post(
   "/update/:id",
-  requireSchema(updateSchemas),
+  upload.fields([
+    { name: "idCard", maxCount: 2 },
+    { name: "businessRegisterNum", maxCount: 2 },
+  ]),
   authControler.updateUSer
 );
 

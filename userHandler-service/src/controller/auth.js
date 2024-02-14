@@ -79,9 +79,9 @@ module.exports.verifyUser = async (req, res) => {
 
 module.exports.UserRegister = async (req, res) => {
   try {
-    console.log("start");
+    // console.log("start");
     const result = req.body;
-    console.log("🚀 ~ module.exports.UserRegister= ~ result:", result);
+    // console.log("🚀 ~ module.exports.UserRegister= ~ result:", result);
     result.email = result.email.toLowerCase();
     if (result.error) {
       const x = result.error.details.map((error) => error.message);
@@ -92,30 +92,6 @@ module.exports.UserRegister = async (req, res) => {
     }
 
     const files = req.files;
-    // const attachArtwork = [];
-    // if (files || files?.length < 1) {
-    //   for (const file of files) {
-    //     const { path } = file;
-    //     try {
-    //       const uploader = await cloudinary.uploader.upload(path, {
-    //         folder: "Occudiz",
-    //       });
-
-    //       attachArtwork.push({ url: uploader.secure_url });
-    //       if (fs.existsSync(path)) {
-    //         fs.unlinkSync(path);
-    //       } else {
-    //         console.log("File does not exist:", path);
-    //       }
-    //     } catch (err) {
-    //       if (attachArtwork?.length) {
-    //         // const imgs = imgObjs.map((obj) => obj.public_id);
-    //         // cloudinary.api.delete_resources(imgs);
-    //       }
-    //       console.log(err);
-    //     }
-    //   }
-    // }
 
     if (!files || files?.length < 1) {
     }
@@ -124,10 +100,7 @@ module.exports.UserRegister = async (req, res) => {
       idCard: [],
       businessRegisterNum: [],
     };
-    // return res.status(401).json({
-    //   success: false,
-    //   message: "You have to upload at least one image to the listing",
-    // });
+
     for (const fileArray in files) {
       for (const file in files[fileArray]) {
         try {
@@ -151,14 +124,15 @@ module.exports.UserRegister = async (req, res) => {
         }
       }
     }
-    console.log(
-      attachArtwork.idCard.map((x) => x.url),
-      attachArtwork.businessRegisterNum
-    );
+
+    // console.log(
+    //   attachArtwork.idCard.map((x) => x.url),
+    //   attachArtwork.businessRegisterNum
+    // );
 
     const role = 2;
     let userBids = 5;
-    const sub = "normal";
+    const sub = "basic";
 
     const existingEmail = await UserModel.findOne({
       email: result.email,
@@ -176,6 +150,10 @@ module.exports.UserRegister = async (req, res) => {
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(result.password, salt);
+    console.log(
+      "🚀 ~ module.exports.UserRegister= ~ result.password:",
+      result.password
+    );
 
     const newUser = new UserModel({
       ...result,
@@ -222,7 +200,7 @@ module.exports.UserRegister = async (req, res) => {
 module.exports.verifyOTP = async (req, res) => {
   try {
     const { otpToken, email } = req.body;
-    const user = await UserModel.findOne({ email });
+    const user = await UserModel.findOne({ email: email.toLowerCase() });
     if (!user) {
       return res
         .status(400)
@@ -233,6 +211,8 @@ module.exports.verifyOTP = async (req, res) => {
         .status(400)
         .send({ success: false, message: "Otp is not same" });
     }
+    user.active = true;
+    await user.save();
     delete user.otp;
     res
       .status(200)
@@ -290,8 +270,8 @@ module.exports.login = async (req, res) => {
         .status(400)
         .send({ success: false, message: "No user Found on that email" });
     }
-
     const validPassword = await bcrypt.compare(password, user.hashedPassword);
+    console.log(validPassword);
     if (!validPassword) {
       return res.status(400).send({
         success: false,
@@ -390,23 +370,50 @@ module.exports.getOneUser = async (req, res) => {
 
 module.exports.updateUSer = async (req, res) => {
   try {
-    const {
-      name,
-      email,
-      password,
-      phoneNumber,
-      type,
-      idCard,
-      businessRegisterNum,
-    } = req.body;
-
+    const { name, email, password, phoneNumber, type, country, address } =
+      req.body;
+    console.log(123);
     const userId = req.params.id;
-
+    console.log();
     const user = await UserModel.findById(userId);
     if (!user) {
       return res
         .status(400)
         .send({ success: false, message: "No user found on that Id" });
+    }
+
+    const files = req.files;
+
+    if (!files || files?.length < 1) {
+    }
+
+    const attachArtwork = {
+      idCard: [],
+      businessRegisterNum: [],
+    };
+
+    for (const fileArray in files) {
+      for (const file in files[fileArray]) {
+        try {
+          const uploader = await cloudinary.uploader.upload(
+            files[fileArray][file].path,
+            {
+              folder: "occudiz",
+            }
+          );
+          attachArtwork[fileArray].push({
+            url: uploader.secure_url,
+            type: fileArray,
+          });
+          fs.unlinkSync(files[fileArray][file].path);
+        } catch (err) {
+          if (attachArtwork[fileArray]?.length) {
+            const imgs = attachArtwork[fileArray].map((obj) => obj.public_id);
+            cloudinary.api.delete_resources(imgs);
+          }
+          console.log(err);
+        }
+      }
     }
 
     if (password) {
@@ -417,10 +424,14 @@ module.exports.updateUSer = async (req, res) => {
 
     user.name = name || user.name;
     user.email = email || user.email;
+    user.country = country || user.country;
+    user.address = address || user.address;
     user.phoneNumber = phoneNumber || user.phoneNumber;
     user.type = type || user.type;
-    user.idCard = idCard || user.idCard;
-    user.businessRegisterNum = businessRegisterNum || user.businessRegisterNum;
+    user.idCard = attachArtwork.idCard.map((x) => x.url) || user.idCard;
+    user.businessRegisterNum =
+      attachArtwork.businessRegisterNum.map((x) => x.url) ||
+      user.businessRegisterNum;
     user.active = false;
 
     await user.save();

@@ -109,17 +109,19 @@ module.exports.getOneBit = async (req, res) => {
 module.exports.getAllProjectBit = async (req, res) => {
   try {
     const projectId = req.params.projectId;
+    console.log(projectId);
     const allBit = await BiddingModel.find({ projectId })
       .populate("userId")
       .populate("projectId");
 
+    console.log(allBit);
     return res.status(200).send({ success: true, data: allBit });
   } catch (error) {}
-  console.log(error);
   return res
     .status(500)
     .send({ success: false, message: "Internal server error" });
 };
+
 module.exports.getAllUserBit = async (req, res) => {
   try {
     const userId = req.params.userId;

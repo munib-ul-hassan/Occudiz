@@ -75,9 +75,9 @@ module.exports.stageCreate = async (req, res) => {
 
 module.exports.workingDateCreate = async (req, res) => {
   try {
-    const { workingDays, holidays, workingTime } = req.body;
+    const { workingDate, holidays, workingTime } = req.body;
     const newWork = new WorkingDate({
-      workingDays,
+      workingDate,
       holidays,
       workingTime,
     });

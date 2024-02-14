@@ -11,6 +11,12 @@ const UserSchema = new mongoose.Schema(
       require: true,
       unique: true,
     },
+    country: {
+      type: String,
+    },
+    address: {
+      type: String,
+    },
     hashedPassword: {
       type: String,
       requier: true,
@@ -62,7 +68,7 @@ const UserSchema = new mongoose.Schema(
     sub: {
       type: String,
       required: true,
-      enum: ["normal", "five", "thentyFive"],
+      enum: ["basic", "team", "professional"],
     },
     otp: {
       type: Number,
