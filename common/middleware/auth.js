@@ -124,9 +124,10 @@ const requireAdminUser = (req, res, next) => {
 
 const authenticateToken = async (token) => {
   const SECRET = config.JWT_SECRET;
-
+  console.log(SECRET, "==");
   try {
     const decoded = jwt.verify(token, SECRET);
+    console.log(decoded);
 
     const UserRole =
       decoded.roleId === 1 ? "Admin" : decoded.roleId === 2 ? "User" : null;
@@ -142,6 +143,7 @@ const authenticateToken = async (token) => {
     delete user.password;
     return user;
   } catch (error) {
+    console.log(error);
     throw Error(error);
   }
 };

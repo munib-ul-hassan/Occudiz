@@ -14,10 +14,22 @@ const BiddingSchema = new mongoose.Schema(
       type: Number,
     },
     documents: {
-      type: String,
+      type: [String],
+      default: [],
     },
     message: {
       type: String,
+    },
+    day: {
+      type: String,
+    },
+    month: {
+      type: String,
+    },
+    status: {
+      type: String,
+      enum: ["accept", "reject", "pending"],
+      default: "pending",
     },
   },
   { timestamps: true }

@@ -21,7 +21,7 @@ const router = express.Router();
 router.post(
   "/add/bid/:projectId",
   requireUserProjectOwner,
-  upload.array("documents", 1),
+  upload.array("documents", 5),
   // requireSchema(bidSchema),
   biddingController.createBidding
 );
@@ -32,7 +32,7 @@ router.get("/all/user/bit/:userId", biddingController.getAllUserBit);
 router.get("/one/bit/:bitId", biddingController.getOneBit);
 router.post(
   "/update/bit/:bitId",
-  upload.array("documents", 1),
+  upload.array("documents", 5),
   biddingController.updateBitting
 );
 module.exports = router;

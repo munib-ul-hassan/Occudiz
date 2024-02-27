@@ -415,6 +415,8 @@ module.exports.updateUSer = async (req, res) => {
         }
       }
     }
+    console.log(!attachArtwork.idCard.length > 0);
+    console.log(attachArtwork);
 
     if (password) {
       const salt = await bcrypt.genSalt(10);
@@ -428,10 +430,14 @@ module.exports.updateUSer = async (req, res) => {
     user.address = address || user.address;
     user.phoneNumber = phoneNumber || user.phoneNumber;
     user.type = type || user.type;
-    user.idCard = attachArtwork.idCard.map((x) => x.url) || user.idCard;
+    user.idCard =
+      !attachArtwork.idCard.length > 0
+        ? user.idCard
+        : attachArtwork.idCard.map((x) => x.url);
     user.businessRegisterNum =
-      attachArtwork.businessRegisterNum.map((x) => x.url) ||
-      user.businessRegisterNum;
+      !attachArtwork.businessRegisterNum.length > 0
+        ? user.businessRegisterNum
+        : attachArtwork.businessRegisterNum.map((x) => x.url);
     user.active = false;
 
     await user.save();
