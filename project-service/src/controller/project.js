@@ -437,7 +437,9 @@ module.exports.oneAnswer = async (req, res) => {
 
 module.exports.allProject = async (req, res) => {
   try {
-    const allProject = await ProjectModel.find()
+    const allProject = await ProjectModel.find({
+      userId: req.user._id.toString(),
+    })
       // .populate({ path: "type", select: "type" })
       .populate("status")
       .populate("stage")
